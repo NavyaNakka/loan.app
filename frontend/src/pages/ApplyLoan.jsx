@@ -641,7 +641,7 @@ export default function ApplyLoan() {
       const sessionId = getSessionId();
       const phone = String(formData.phone);
 
-      const res = await axios.post("http://localhost:5000/api/apply", {
+      const res = await axios.post("https://loan-app-cqlh.onrender.com/api/apply", {
         ...formData,
         acceptedTerms:true,
         phone,
