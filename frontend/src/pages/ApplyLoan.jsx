@@ -1,126 +1,229 @@
 
+
 // import { useState } from "react";
 // import { Link } from "react-router-dom";
 // import axios from "axios";
+// import { trackAction } from "../services/track";
+// import { getSessionId } from "../services/session";
+
+// const initialForm = {
+//   fullName: "",
+//   phone: "",
+//   gender: "",
+//   pincode: "",
+//   loanType: "",
+//   loanAmount: "",
+//   employmentType: "",
+//   yearlyIncome: "",
+//   acceptedTerms: true,
+// };
+
+// // ─── Validation Rules ────────────────────────────────────────────────────────
+// const validate = (formData) => {
+//   const errors = {};
+
+//   // Full Name — letters and spaces only, not empty
+//   if (!formData.fullName.trim()) {
+//     errors.fullName = "Full name is required.";
+//   } else if (!/^[A-Za-z\s]+$/.test(formData.fullName.trim())) {
+//     errors.fullName = "Name must contain letters only (no numbers or special characters).";
+//   }
+
+//   // Phone — digits only, exactly 10 digits
+//   if (!formData.phone.trim()) {
+//     errors.phone = "Phone number is required.";
+//   } else if (!/^\d+$/.test(formData.phone)) {
+//     errors.phone = "Phone number must contain digits only.";
+//   } else if (formData.phone.length !== 10) {
+//     errors.phone = "Phone number must be exactly 10 digits.";
+//   }
+
+//   // Gender
+//   if (!formData.gender) {
+//     errors.gender = "Please select your gender.";
+//   }
+
+//   // Pincode — digits only, exactly 6 digits
+//   if (!formData.pincode.trim()) {
+//     errors.pincode = "Pincode is required.";
+//   } else if (!/^\d+$/.test(formData.pincode)) {
+//     errors.pincode = "Pincode must contain digits only.";
+//   } else if (formData.pincode.length !== 6) {
+//     errors.pincode = "Pincode must be exactly 6 digits.";
+//   }
+
+//   // Loan Type
+//   if (!formData.loanType) {
+//     errors.loanType = "Please select a loan type.";
+//   }
+
+//   // Loan Amount — positive number
+//   if (!formData.loanAmount.toString().trim()) {
+//     errors.loanAmount = "Loan amount is required.";
+//   } else if (!/^\d+(\.\d{1,2})?$/.test(formData.loanAmount)) {
+//     errors.loanAmount = "Enter a valid loan amount (digits only).";
+//   } else if (parseFloat(formData.loanAmount) <= 0) {
+//     errors.loanAmount = "Loan amount must be greater than 0.";
+//   }
+
+//   // Employment Type
+//   if (!formData.employmentType) {
+//     errors.employmentType = "Please select your employment type.";
+//   }
+
+//   // Yearly Income — positive number
+//   if (!formData.yearlyIncome.toString().trim()) {
+//     errors.yearlyIncome = "Yearly income is required.";
+//   } else if (!/^\d+(\.\d{1,2})?$/.test(formData.yearlyIncome)) {
+//     errors.yearlyIncome = "Enter a valid yearly income (digits only).";
+//   } else if (parseFloat(formData.yearlyIncome) <= 0) {
+//     errors.yearlyIncome = "Yearly income must be greater than 0.";
+//   }
+
+//   // Terms
+//   if (!formData.acceptedTerms) {
+//     errors.acceptedTerms = "You must accept the Terms & Conditions to proceed.";
+//   }
+
+//   return errors;
+// };
+
+// // ─── Field-level instant validation ──────────────────────────────────────────
+// const validateField = (name, value) => {
+//   const temp = { ...initialForm, [name]: value, acceptedTerms: name === "acceptedTerms" ? value : false };
+//   const errs = validate(temp);
+//   // Only return error for the field being validated (ignore acceptedTerms cross-check)
+//   return errs[name] || "";
+// };
 
 // export default function ApplyLoan() {
-//   const [formData, setFormData] = useState({
-//     fullName: "",
-//     phone: "",
-//     gender: "",
-//     pincode: "",
-//     loanType: "",
-//     loanAmount: "",
-//     employmentType: "",
-//     yearlyIncome: "",
-//     acceptedTerms: true,
-//   });
-
+//   const [formData, setFormData] = useState(initialForm);
+//   const [errors, setErrors] = useState({});
+//   const [touched, setTouched] = useState({});
 //   const [loading, setLoading] = useState(false);
 
 //   const handleChange = (e) => {
 //     const { name, value, type, checked } = e.target;
+//     const newValue = type === "checkbox" ? checked : value;
 
-//     setFormData((prev) => ({
+//     setFormData((prev) => ({ ...prev, [name]: newValue }));
+
+//     // Live-validate only if field was already touched
+//     if (touched[name]) {
+//       setErrors((prev) => ({
+//         ...prev,
+//         [name]: validateField(name, newValue),
+//       }));
+//     }
+//   };
+
+//   const handleBlur = (e) => {
+//     const { name, value, type, checked } = e.target;
+//     const newValue = type === "checkbox" ? checked : value;
+
+//     setTouched((prev) => ({ ...prev, [name]: true }));
+//     setErrors((prev) => ({
 //       ...prev,
-//       [name]: type === "checkbox" ? checked : value,
+//       [name]: validateField(name, newValue),
 //     }));
 //   };
 
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 
-//     if (!formData.acceptedTerms) {
-//       alert("Please accept terms and conditions");
-//       return;
-//     }
+//     // Mark all fields as touched
+//     const allTouched = Object.keys(initialForm).reduce((acc, k) => ({ ...acc, [k]: true }), {});
+//     setTouched(allTouched);
+
+//     const validationErrors = validate(formData);
+//     setErrors(validationErrors);
+
+//     if (Object.keys(validationErrors).length > 0) return; // Stop if errors exist
 
 //     try {
 //       setLoading(true);
+//       trackAction("submit application");
+//       const sessionId = getSessionId();
+//       const phone = String(formData.phone);
 
-//       const res = await axios.post(
-//         "http://localhost:5000/api/apply",
-//         formData
-//       );
-
-//       console.log(res.data);
-
-//       alert("✅ Application submitted successfully!");
-
-//       // reset form
-//       setFormData({
-//         fullName: "",
-//         phone: "",
-//         gender: "",
-//         pincode: "",
-//         loanType: "",
-//         loanAmount: "",
-//         employmentType: "",
-//         yearlyIncome: "",
-//         acceptedTerms: true,
+//       const res = await axios.post("https://loan-app-cqlh.onrender.com/api/apply", {
+//         ...formData,
+//         acceptedTerms:true,
+//         phone,
+//         sessionId,
 //       });
 
+//       console.log("✅ Response:", res.data);
+//       alert("✅ Application submitted successfully!");
+
+//       setFormData(initialForm);
+//       setErrors({});
+//       setTouched({});
 //     } catch (error) {
-//       console.error(error);
-//       alert("❌ Failed to submit application");
+//       console.error("❌ Submit Error:", error);
+//       alert("❌ Failed to submit application. Please try again.");
 //     } finally {
 //       setLoading(false);
 //     }
 //   };
 
+//   // Helper: field wrapper with error display
+//   const FieldError = ({ name }) =>
+//     touched[name] && errors[name] ? (
+//       <p className="mt-1 flex items-center gap-1 text-xs text-red-500">
+//         <svg className="h-3.5 w-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+//           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+//         </svg>
+//         {errors[name]}
+//       </p>
+//     ) : null;
+
+//   const inputClass = (name) =>
+//     `input w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-all focus:ring-2 ${
+//       touched[name] && errors[name]
+//         ? "border-red-400 bg-red-50 focus:ring-red-300"
+//         : touched[name] && !errors[name]
+//         ? "border-green-400 bg-green-50 focus:ring-green-300"
+//         : "border-slate-200 bg-white focus:ring-blue-300"
+//     }`;
+
 //   return (
 //     <section className="min-h-screen bg-slate-50 pt-28 pb-12 sm:pt-32 sm:pb-16">
 //       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-//         {/* Top Heading */}
+
+//         {/* Header */}
 //         <div className="mx-auto max-w-3xl text-center">
 //           <span className="inline-flex rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-700">
 //             Loan Application
 //           </span>
-
 //           <h1 className="mt-4 text-4xl font-bold text-slate-900 sm:text-5xl">
 //             Apply for your loan in a secure and simple way
 //           </h1>
-
 //           <p className="mt-4 text-lg text-slate-600">
 //             Fill in your personal details, accept the terms, and submit your application in a few steps.
 //           </p>
 //         </div>
 
-//         {/* Main Layout */}
 //         <div className="mt-12 grid gap-8 lg:grid-cols-5">
-          
-//           {/* LEFT PANEL (UNCHANGED) */}
+
+//           {/* LEFT PANEL */}
 //           <div className="lg:col-span-2">
 //             <div className="rounded-3xl bg-blue-600 p-8 text-white shadow-sm">
 //               <h2 className="text-2xl font-bold">Why apply with us?</h2>
-
 //               <p className="mt-3 text-blue-100">
-//                 A guided, secure, and professional application process designed
-//                 for faster loan requests.
+//                 A guided, secure, and professional application process designed for faster loan requests.
 //               </p>
-
 //               <div className="mt-8 space-y-4">
-//                 <div className="rounded-2xl bg-white/10 p-5">
-//                   <h3 className="text-lg font-semibold">Simple Form</h3>
-//                   <p className="mt-2 text-sm text-blue-100">
-//                     Enter your details in a clear and easy application flow.
-//                   </p>
-//                 </div>
-
-//                 <div className="rounded-2xl bg-white/10 p-5">
-//                   <h3 className="text-lg font-semibold">Secure Submission</h3>
-//                   <p className="mt-2 text-sm text-blue-100">
-//                     Your information is submitted through a secure process.
-//                   </p>
-//                 </div>
-
-//                 <div className="rounded-2xl bg-white/10 p-5">
-//                   <h3 className="text-lg font-semibold">Quick Review</h3>
-//                   <p className="mt-2 text-sm text-blue-100">
-//                     Your application is processed quickly after submission.
-//                   </p>
-//                 </div>
+//                 {[
+//                   { title: "Simple Form", desc: "Enter your details in a clear and easy application flow." },
+//                   { title: "Secure Submission", desc: "Your information is submitted through a secure process." },
+//                   { title: "Quick Review", desc: "Your application is processed quickly after submission." },
+//                 ].map((item) => (
+//                   <div key={item.title} className="rounded-2xl bg-white/10 p-5">
+//                     <h3 className="text-lg font-semibold">{item.title}</h3>
+//                     <p className="mt-2 text-sm text-blue-100">{item.desc}</p>
+//                   </div>
+//                 ))}
 //               </div>
 //             </div>
 //           </div>
@@ -128,70 +231,94 @@
 //           {/* RIGHT FORM */}
 //           <div className="lg:col-span-3">
 //             <div className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
-//               <h2 className="text-2xl font-bold text-slate-900">
-//                 Loan Application Form
-//               </h2>
+//               <h2 className="text-2xl font-bold text-slate-900">Loan Application Form</h2>
 
-//               <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-//                 <div className="grid gap-6 md:grid-cols-2">
+//               <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-6">
+//                 <div className="grid gap-5 md:grid-cols-2">
 
+//                   {/* Full Name */}
 //                   <div className="md:col-span-2">
-//                     <label className="label">Full Name</label>
+//                     <label className="mb-1.5 block text-sm font-medium text-slate-700">
+//                       Full Name <span className="text-red-500">*</span>
+//                     </label>
 //                     <input
 //                       name="fullName"
 //                       value={formData.fullName}
 //                       onChange={handleChange}
-//                       className="input"
-//                       required
+//                       onBlur={handleBlur}
+//                       placeholder="e.g. Rahul Sharma"
+//                       className={inputClass("fullName")}
 //                     />
+//                     <FieldError name="fullName" />
 //                   </div>
 
+//                   {/* Phone */}
 //                   <div>
-//                     <label className="label">Phone Number</label>
+//                     <label className="mb-1.5 block text-sm font-medium text-slate-700">
+//                       Phone Number <span className="text-red-500">*</span>
+//                     </label>
 //                     <input
 //                       name="phone"
 //                       value={formData.phone}
 //                       onChange={handleChange}
-//                       className="input"
-//                       required
+//                       onBlur={handleBlur}
+//                       placeholder="10-digit number"
+//                       maxLength={10}
+//                       inputMode="numeric"
+//                       className={inputClass("phone")}
 //                     />
+//                     <FieldError name="phone" />
 //                   </div>
 
+//                   {/* Gender */}
 //                   <div>
-//                     <label className="label">Gender</label>
+//                     <label className="mb-1.5 block text-sm font-medium text-slate-700">
+//                       Gender <span className="text-red-500">*</span>
+//                     </label>
 //                     <select
 //                       name="gender"
 //                       value={formData.gender}
 //                       onChange={handleChange}
-//                       className="input"
-//                       required
+//                       onBlur={handleBlur}
+//                       className={inputClass("gender")}
 //                     >
 //                       <option value="">Select</option>
 //                       <option>Male</option>
 //                       <option>Female</option>
 //                       <option>Other</option>
 //                     </select>
+//                     <FieldError name="gender" />
 //                   </div>
 
+//                   {/* Pincode */}
 //                   <div>
-//                     <label className="label">Pincode</label>
+//                     <label className="mb-1.5 block text-sm font-medium text-slate-700">
+//                       Pincode <span className="text-red-500">*</span>
+//                     </label>
 //                     <input
 //                       name="pincode"
 //                       value={formData.pincode}
 //                       onChange={handleChange}
-//                       className="input"
-//                       required
+//                       onBlur={handleBlur}
+//                       placeholder="6-digit pincode"
+//                       maxLength={6}
+//                       inputMode="numeric"
+//                       className={inputClass("pincode")}
 //                     />
+//                     <FieldError name="pincode" />
 //                   </div>
 
+//                   {/* Loan Type */}
 //                   <div>
-//                     <label className="label">Loan Type</label>
+//                     <label className="mb-1.5 block text-sm font-medium text-slate-700">
+//                       Loan Type <span className="text-red-500">*</span>
+//                     </label>
 //                     <select
 //                       name="loanType"
 //                       value={formData.loanType}
 //                       onChange={handleChange}
-//                       className="input"
-//                       required
+//                       onBlur={handleBlur}
+//                       className={inputClass("loanType")}
 //                     >
 //                       <option value="">Select</option>
 //                       <option>Personal Loan</option>
@@ -199,279 +326,75 @@
 //                       <option>Gold Loan</option>
 //                       <option>Home Loan</option>
 //                     </select>
+//                     <FieldError name="loanType" />
 //                   </div>
 
+//                   {/* Loan Amount */}
 //                   <div>
-//                     <label className="label">Required Loan Amount</label>
+//                     <label className="mb-1.5 block text-sm font-medium text-slate-700">
+//                       Required Loan Amount (₹) <span className="text-red-500">*</span>
+//                     </label>
 //                     <input
 //                       name="loanAmount"
 //                       value={formData.loanAmount}
 //                       onChange={handleChange}
-//                       className="input"
-//                       required
+//                       onBlur={handleBlur}
+//                       placeholder="e.g. 500000"
+//                       inputMode="numeric"
+//                       className={inputClass("loanAmount")}
 //                     />
+//                     <FieldError name="loanAmount" />
 //                   </div>
 
+//                   {/* Employment Type */}
 //                   <div>
-//                     <label className="label">Employment Type</label>
+//                     <label className="mb-1.5 block text-sm font-medium text-slate-700">
+//                       Employment Type <span className="text-red-500">*</span>
+//                     </label>
 //                     <select
 //                       name="employmentType"
 //                       value={formData.employmentType}
 //                       onChange={handleChange}
-//                       className="input"
-//                       required
+//                       onBlur={handleBlur}
+//                       className={inputClass("employmentType")}
 //                     >
 //                       <option value="">Select</option>
 //                       <option>Salaried</option>
 //                       <option>Self Employed</option>
 //                     </select>
+//                     <FieldError name="employmentType" />
 //                   </div>
 
+//                   {/* Yearly Income */}
 //                   <div>
-//                     <label className="label">Yearly Income</label>
+//                     <label className="mb-1.5 block text-sm font-medium text-slate-700">
+//                       Yearly Income (₹) <span className="text-red-500">*</span>
+//                     </label>
 //                     <input
 //                       name="yearlyIncome"
 //                       value={formData.yearlyIncome}
 //                       onChange={handleChange}
-//                       className="input"
-//                       required
+//                       onBlur={handleBlur}
+//                       placeholder="e.g. 600000"
+//                       inputMode="numeric"
+//                       className={inputClass("yearlyIncome")}
 //                     />
+//                     <FieldError name="yearlyIncome" />
 //                   </div>
+
 //                 </div>
 
-//                 {/* Terms */}
-//                 <div className="rounded-xl bg-slate-50 p-4">
-//                   <label className="flex gap-3">
+//                 {/* Terms & Conditions */}
+//                 <div className={`rounded-xl p-4 ${touched.acceptedTerms && errors.acceptedTerms ? "bg-red-50 ring-1 ring-red-300" : "bg-slate-50"}`}>
+//                   <label className="flex gap-3 cursor-pointer">
 //                     <input
 //                       type="checkbox"
 //                       name="acceptedTerms"
 //                       checked={formData.acceptedTerms}
 //                       onChange={handleChange}
+//                       onBlur={handleBlur}
+//                       className="mt-0.5 h-4 w-4 accent-blue-600"
 //                     />
-//                     <span className="text-sm text-slate-700">
-//                       By continuing, you agree to our{" "}
-//                       <Link to="/terms" className="text-blue-600 underline">
-//                         Terms & Conditions
-//                       </Link>{" "}
-//                       and{" "}
-//                       <Link to="/privacy" className="text-blue-600 underline">
-//                         Privacy Policy
-//                       </Link>.
-//                     </span>
-//                   </label>
-//                 </div>
-
-//                 <button
-//                   disabled={loading}
-//                   className="w-full rounded-xl bg-blue-600 py-3 text-white font-semibold"
-//                 >
-//                   {loading ? "Submitting..." : "Submit Application"}
-//                 </button>
-
-//               </form>
-//             </div>
-//           </div>
-
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-// import { useState } from "react";
-// import { Link } from "react-router-dom";
-// import axios from "axios";
-// import { trackAction } from "../services/track"; // 🔥 added
-
-// export default function ApplyLoan() {
-//   const [formData, setFormData] = useState({
-//     fullName: "",
-//     phone: "",
-//     gender: "",
-//     pincode: "",
-//     loanType: "",
-//     loanAmount: "",
-//     employmentType: "",
-//     yearlyIncome: "",
-//     acceptedTerms: true,
-//   });
-
-//   const [loading, setLoading] = useState(false);
-
-//   const handleChange = (e) => {
-//     const { name, value, type, checked } = e.target;
-
-//     setFormData((prev) => ({
-//       ...prev,
-//       [name]: type === "checkbox" ? checked : value,
-//     }));
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     if (!formData.acceptedTerms) {
-//       alert("Please accept terms and conditions");
-//       return;
-//     }
-
-//     try {
-//       setLoading(true);
-
-//       // 🔥 TRACK SUBMIT ACTION
-//       trackAction("submit application");
-
-//       const res = await axios.post(
-//         "http://localhost:5000/api/apply",
-//         formData
-//       );
-
-//       console.log(res.data);
-
-//       alert("✅ Application submitted successfully!");
-
-//       // reset form
-//       setFormData({
-//         fullName: "",
-//         phone: "",
-//         gender: "",
-//         pincode: "",
-//         loanType: "",
-//         loanAmount: "",
-//         employmentType: "",
-//         yearlyIncome: "",
-//         acceptedTerms: true,
-//       });
-
-//     } catch (error) {
-//       console.error(error);
-//       alert("❌ Failed to submit application");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <section className="min-h-screen bg-slate-50 pt-28 pb-12 sm:pt-32 sm:pb-16">
-//       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-//         <div className="mx-auto max-w-3xl text-center">
-//           <span className="inline-flex rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-700">
-//             Loan Application
-//           </span>
-
-//           <h1 className="mt-4 text-4xl font-bold text-slate-900 sm:text-5xl">
-//             Apply for your loan in a secure and simple way
-//           </h1>
-
-//           <p className="mt-4 text-lg text-slate-600">
-//             Fill in your personal details, accept the terms, and submit your application in a few steps.
-//           </p>
-//         </div>
-
-//         <div className="mt-12 grid gap-8 lg:grid-cols-5">
-          
-//           <div className="lg:col-span-2">
-//             <div className="rounded-3xl bg-blue-600 p-8 text-white shadow-sm">
-//               <h2 className="text-2xl font-bold">Why apply with us?</h2>
-
-//               <p className="mt-3 text-blue-100">
-//                 A guided, secure, and professional application process designed
-//                 for faster loan requests.
-//               </p>
-
-//               <div className="mt-8 space-y-4">
-//                 <div className="rounded-2xl bg-white/10 p-5">
-//                   <h3 className="text-lg font-semibold">Simple Form</h3>
-//                   <p className="mt-2 text-sm text-blue-100">
-//                     Enter your details in a clear and easy application flow.
-//                   </p>
-//                 </div>
-
-//                 <div className="rounded-2xl bg-white/10 p-5">
-//                   <h3 className="text-lg font-semibold">Secure Submission</h3>
-//                   <p className="mt-2 text-sm text-blue-100">
-//                     Your information is submitted through a secure process.
-//                   </p>
-//                 </div>
-
-//                 <div className="rounded-2xl bg-white/10 p-5">
-//                   <h3 className="text-lg font-semibold">Quick Review</h3>
-//                   <p className="mt-2 text-sm text-blue-100">
-//                     Your application is processed quickly after submission.
-//                   </p>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="lg:col-span-3">
-//             <div className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
-//               <h2 className="text-2xl font-bold text-slate-900">
-//                 Loan Application Form
-//               </h2>
-
-//               <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-//                 <div className="grid gap-6 md:grid-cols-2">
-
-//                   <div className="md:col-span-2">
-//                     <label className="label">Full Name</label>
-//                     <input name="fullName" value={formData.fullName} onChange={handleChange} className="input" required />
-//                   </div>
-
-//                   <div>
-//                     <label className="label">Phone Number</label>
-//                     <input name="phone" value={formData.phone} onChange={handleChange} className="input" required />
-//                   </div>
-
-//                   <div>
-//                     <label className="label">Gender</label>
-//                     <select name="gender" value={formData.gender} onChange={handleChange} className="input" required>
-//                       <option value="">Select</option>
-//                       <option>Male</option>
-//                       <option>Female</option>
-//                       <option>Other</option>
-//                     </select>
-//                   </div>
-
-//                   <div>
-//                     <label className="label">Pincode</label>
-//                     <input name="pincode" value={formData.pincode} onChange={handleChange} className="input" required />
-//                   </div>
-
-//                   <div>
-//                     <label className="label">Loan Type</label>
-//                     <select name="loanType" value={formData.loanType} onChange={handleChange} className="input" required>
-//                       <option value="">Select</option>
-//                       <option>Personal Loan</option>
-//                       <option>Business Loan</option>
-//                       <option>Gold Loan</option>
-//                       <option>Home Loan</option>
-//                     </select>
-//                   </div>
-
-//                   <div>
-//                     <label className="label">Required Loan Amount</label>
-//                     <input name="loanAmount" value={formData.loanAmount} onChange={handleChange} className="input" required />
-//                   </div>
-
-//                   <div>
-//                     <label className="label">Employment Type</label>
-//                     <select name="employmentType" value={formData.employmentType} onChange={handleChange} className="input" required>
-//                       <option value="">Select</option>
-//                       <option>Salaried</option>
-//                       <option>Self Employed</option>
-//                     </select>
-//                   </div>
-
-//                   <div>
-//                     <label className="label">Yearly Income</label>
-//                     <input name="yearlyIncome" value={formData.yearlyIncome} onChange={handleChange} className="input" required />
-//                   </div>
-//                 </div>
-
-//                 <div className="rounded-xl bg-slate-50 p-4">
-//                   <label className="flex gap-3">
-//                     <input type="checkbox" name="acceptedTerms" checked={formData.acceptedTerms} onChange={handleChange} />
 //                     <span className="text-sm text-slate-700">
 //                       By continuing, you agree to our{" "}
 //                       <Link to="/terms" className="text-blue-600 underline">Terms & Conditions</Link>{" "}
@@ -479,10 +402,26 @@
 //                       <Link to="/privacy" className="text-blue-600 underline">Privacy Policy</Link>.
 //                     </span>
 //                   </label>
+//                   <FieldError name="acceptedTerms" />
 //                 </div>
 
-//                 <button disabled={loading} className="w-full rounded-xl bg-blue-600 py-3 text-white font-semibold">
-//                   {loading ? "Submitting..." : "Submit Application"}
+//                 {/* Submit Button */}
+//                 <button
+//                   type="submit"
+//                   disabled={loading}
+//                   className="w-full rounded-xl bg-blue-600 py-3 text-white font-semibold transition hover:bg-blue-700 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+//                 >
+//                   {loading ? (
+//                     <span className="flex items-center justify-center gap-2">
+//                       <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+//                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+//                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+//                       </svg>
+//                       Submitting...
+//                     </span>
+//                   ) : (
+//                     "Submit Application"
+//                   )}
 //                 </button>
 
 //               </form>
@@ -494,7 +433,6 @@
 //     </section>
 //   );
 // }
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -513,18 +451,15 @@ const initialForm = {
   acceptedTerms: true,
 };
 
-// ─── Validation Rules ────────────────────────────────────────────────────────
 const validate = (formData) => {
   const errors = {};
 
-  // Full Name — letters and spaces only, not empty
   if (!formData.fullName.trim()) {
     errors.fullName = "Full name is required.";
   } else if (!/^[A-Za-z\s]+$/.test(formData.fullName.trim())) {
     errors.fullName = "Name must contain letters only (no numbers or special characters).";
   }
 
-  // Phone — digits only, exactly 10 digits
   if (!formData.phone.trim()) {
     errors.phone = "Phone number is required.";
   } else if (!/^\d+$/.test(formData.phone)) {
@@ -533,12 +468,10 @@ const validate = (formData) => {
     errors.phone = "Phone number must be exactly 10 digits.";
   }
 
-  // Gender
   if (!formData.gender) {
     errors.gender = "Please select your gender.";
   }
 
-  // Pincode — digits only, exactly 6 digits
   if (!formData.pincode.trim()) {
     errors.pincode = "Pincode is required.";
   } else if (!/^\d+$/.test(formData.pincode)) {
@@ -547,12 +480,10 @@ const validate = (formData) => {
     errors.pincode = "Pincode must be exactly 6 digits.";
   }
 
-  // Loan Type
   if (!formData.loanType) {
     errors.loanType = "Please select a loan type.";
   }
 
-  // Loan Amount — positive number
   if (!formData.loanAmount.toString().trim()) {
     errors.loanAmount = "Loan amount is required.";
   } else if (!/^\d+(\.\d{1,2})?$/.test(formData.loanAmount)) {
@@ -561,12 +492,10 @@ const validate = (formData) => {
     errors.loanAmount = "Loan amount must be greater than 0.";
   }
 
-  // Employment Type
   if (!formData.employmentType) {
     errors.employmentType = "Please select your employment type.";
   }
 
-  // Yearly Income — positive number
   if (!formData.yearlyIncome.toString().trim()) {
     errors.yearlyIncome = "Yearly income is required.";
   } else if (!/^\d+(\.\d{1,2})?$/.test(formData.yearlyIncome)) {
@@ -575,7 +504,6 @@ const validate = (formData) => {
     errors.yearlyIncome = "Yearly income must be greater than 0.";
   }
 
-  // Terms
   if (!formData.acceptedTerms) {
     errors.acceptedTerms = "You must accept the Terms & Conditions to proceed.";
   }
@@ -583,11 +511,9 @@ const validate = (formData) => {
   return errors;
 };
 
-// ─── Field-level instant validation ──────────────────────────────────────────
 const validateField = (name, value) => {
   const temp = { ...initialForm, [name]: value, acceptedTerms: name === "acceptedTerms" ? value : false };
   const errs = validate(temp);
-  // Only return error for the field being validated (ignore acceptedTerms cross-check)
   return errs[name] || "";
 };
 
@@ -600,57 +526,40 @@ export default function ApplyLoan() {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === "checkbox" ? checked : value;
-
     setFormData((prev) => ({ ...prev, [name]: newValue }));
-
-    // Live-validate only if field was already touched
     if (touched[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: validateField(name, newValue),
-      }));
+      setErrors((prev) => ({ ...prev, [name]: validateField(name, newValue) }));
     }
   };
 
   const handleBlur = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === "checkbox" ? checked : value;
-
     setTouched((prev) => ({ ...prev, [name]: true }));
-    setErrors((prev) => ({
-      ...prev,
-      [name]: validateField(name, newValue),
-    }));
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, newValue) }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Mark all fields as touched
     const allTouched = Object.keys(initialForm).reduce((acc, k) => ({ ...acc, [k]: true }), {});
     setTouched(allTouched);
-
     const validationErrors = validate(formData);
     setErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length > 0) return; // Stop if errors exist
+    if (Object.keys(validationErrors).length > 0) return;
 
     try {
       setLoading(true);
       trackAction("submit application");
       const sessionId = getSessionId();
       const phone = String(formData.phone);
-
       const res = await axios.post("https://loan-app-cqlh.onrender.com/api/apply", {
         ...formData,
-        acceptedTerms:true,
+        acceptedTerms: true,
         phone,
         sessionId,
       });
-
       console.log("✅ Response:", res.data);
       alert("✅ Application submitted successfully!");
-
       setFormData(initialForm);
       setErrors({});
       setTouched({});
@@ -662,7 +571,6 @@ export default function ApplyLoan() {
     }
   };
 
-  // Helper: field wrapper with error display
   const FieldError = ({ name }) =>
     touched[name] && errors[name] ? (
       <p className="mt-1 flex items-center gap-1 text-xs text-red-500">
@@ -699,31 +607,10 @@ export default function ApplyLoan() {
           </p>
         </div>
 
+        {/* ── SWAPPED: Form LEFT, Info box RIGHT ── */}
         <div className="mt-12 grid gap-8 lg:grid-cols-5">
 
-          {/* LEFT PANEL */}
-          <div className="lg:col-span-2">
-            <div className="rounded-3xl bg-blue-600 p-8 text-white shadow-sm">
-              <h2 className="text-2xl font-bold">Why apply with us?</h2>
-              <p className="mt-3 text-blue-100">
-                A guided, secure, and professional application process designed for faster loan requests.
-              </p>
-              <div className="mt-8 space-y-4">
-                {[
-                  { title: "Simple Form", desc: "Enter your details in a clear and easy application flow." },
-                  { title: "Secure Submission", desc: "Your information is submitted through a secure process." },
-                  { title: "Quick Review", desc: "Your application is processed quickly after submission." },
-                ].map((item) => (
-                  <div key={item.title} className="rounded-2xl bg-white/10 p-5">
-                    <h3 className="text-lg font-semibold">{item.title}</h3>
-                    <p className="mt-2 text-sm text-blue-100">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT FORM */}
+          {/* LEFT — FORM */}
           <div className="lg:col-span-3">
             <div className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
               <h2 className="text-2xl font-bold text-slate-900">Loan Application Form</h2>
@@ -920,6 +807,28 @@ export default function ApplyLoan() {
                 </button>
 
               </form>
+            </div>
+          </div>
+
+          {/* RIGHT — INFO BOX */}
+          <div className="lg:col-span-2">
+            <div className="rounded-3xl bg-blue-600 p-8 text-white shadow-sm lg:sticky lg:top-28">
+              <h2 className="text-2xl font-bold">Why apply with us?</h2>
+              <p className="mt-3 text-blue-100">
+                A guided, secure, and professional application process designed for faster loan requests.
+              </p>
+              <div className="mt-8 space-y-4">
+                {[
+                  { title: "Simple Form", desc: "Enter your details in a clear and easy application flow." },
+                  { title: "Secure Submission", desc: "Your information is submitted through a secure process." },
+                  { title: "Quick Review", desc: "Your application is processed quickly after submission." },
+                ].map((item) => (
+                  <div key={item.title} className="rounded-2xl bg-white/10 p-5">
+                    <h3 className="text-lg font-semibold">{item.title}</h3>
+                    <p className="mt-2 text-sm text-blue-100">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
