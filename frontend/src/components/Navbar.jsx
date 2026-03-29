@@ -227,7 +227,7 @@ export default function Navbar() {
           onClick={() => trackAction("navbar home click")}
           className="flex items-center gap-2 sm:gap-3"
         >
-          <img src="/logo.png" alt="Kredit Konnect Logo" className="h-10 sm:h-14 w-auto object-contain" />
+          <img src="/logo.png" alt="Kredit Konnect Logo" className="h-10 sm:h-14 w-auto object-contain mix-blend-multiply" />
           <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-800">
             Kredit Konnect
           </span>
