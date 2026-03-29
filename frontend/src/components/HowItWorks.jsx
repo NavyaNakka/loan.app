@@ -28,31 +28,31 @@ export default function HowItWorks() {
 
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold text-slate-900">
+          <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900">
             How It Works
           </h2>
-          <p className="mt-4 text-lg text-slate-600">
+          <p className="mt-3 text-base text-slate-600">
             A simple step-by-step process to complete your loan journey smoothly.
           </p>
         </div>
 
         {/* Steps */}
-        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
           {steps.map((item, index) => (
             <div
               key={index}
-              className="relative rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:shadow-md transition"
+              className="relative rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-6 shadow-sm hover:shadow-md transition"
             >
               {/* Step Number */}
-              <div className="absolute -top-4 left-6 bg-blue-600 text-white text-sm font-semibold px-3 py-1 rounded-full shadow">
+              <div className="absolute -top-3 left-4 sm:left-6 bg-blue-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full shadow">
                 {item.step}
               </div>
 
-              <h3 className="mt-4 text-xl font-semibold text-slate-900">
+              <h3 className="mt-3 text-base sm:text-lg font-bold tracking-tight text-slate-900">
                 {item.title}
               </h3>
 
-              <p className="mt-3 text-slate-600">
+              <p className="mt-2.5 text-xs sm:text-sm leading-relaxed text-slate-600">
                 {item.desc}
               </p>
             </div>

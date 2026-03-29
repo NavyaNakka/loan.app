@@ -190,23 +190,23 @@ function Card({ title, desc, icon: Icon, onClick, clickable }) {
   return (
     <div
       onClick={onClick}
-      className={`group bg-white p-6 sm:p-8 transition-all duration-300 
-      ${clickable ? "cursor-pointer hover:bg-slate-50 relative z-10 hover:shadow-xl hover:shadow-blue-900/5" : ""}`}
+      className={`group bg-white p-4 sm:p-6 lg:p-8 transition-all duration-300 relative z-10 
+      ${clickable ? "cursor-pointer hover:bg-slate-50 hover:shadow-xl hover:shadow-blue-900/5" : ""}`}
     >
       <div className="flex items-start justify-between">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-blue-600 ring-1 ring-slate-100 transition-colors group-hover:bg-blue-600 group-hover:text-white group-hover:ring-blue-600">
-          <Icon size={24} strokeWidth={1.5} />
+        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-slate-50 text-blue-600 ring-1 ring-slate-100 transition-colors group-hover:bg-blue-600 group-hover:text-white group-hover:ring-blue-600">
+          <Icon size={20} strokeWidth={1.5} className="sm:h-6 sm:w-6 h-5 w-5" />
         </div>
-        <span className="text-xl text-slate-300 transition-colors group-hover:text-blue-600">
+        <span className="text-lg sm:text-xl text-slate-300 transition-colors group-hover:text-blue-600">
           ↗
         </span>
       </div>
 
-      <h3 className="mt-5 text-lg font-bold text-slate-900 tracking-tight">
+      <h3 className="mt-4 sm:mt-5 text-sm sm:text-lg lg:text-xl font-bold text-slate-900 tracking-tight">
         {title}
       </h3>
 
-      <p className="mt-2.5 text-sm text-slate-600 leading-relaxed">
+      <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed pr-2">
         {desc}
       </p>
     </div>
@@ -247,8 +247,8 @@ export default function ProductsSection() {
           </p>
         </div>
 
-        <div className="mt-14 mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-200 ring-1 ring-slate-200 shadow-xl shadow-slate-200/50">
-          <div className="grid gap-[1px] sm:grid-cols-2 lg:grid-cols-3 bg-slate-200">
+        <div className="mt-10 sm:mt-14 mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-200 ring-1 ring-slate-200 shadow-xl shadow-slate-200/50">
+          <div className="grid grid-cols-2 gap-[1px] lg:grid-cols-3 bg-slate-200">
             {products.map((item, index) => {
               const isClickable = clickableTitles.includes(item.title);
 
@@ -273,8 +273,8 @@ export default function ProductsSection() {
           </h2>
         </div>
 
-        <div className="mt-12 mx-auto max-w-4xl overflow-hidden rounded-3xl bg-slate-200 ring-1 ring-slate-200 shadow-xl shadow-slate-200/50">
-          <div className="grid gap-[1px] sm:grid-cols-2 bg-slate-200">
+        <div className="mt-10 sm:mt-12 mx-auto max-w-4xl overflow-hidden rounded-3xl bg-slate-200 ring-1 ring-slate-200 shadow-xl shadow-slate-200/50">
+          <div className="grid grid-cols-2 gap-[1px] bg-slate-200">
             {services.map((item, index) => (
               <Card
                 key={index}

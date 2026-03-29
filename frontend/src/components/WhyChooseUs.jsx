@@ -39,7 +39,7 @@ export default function WhyChooseUs() {
         </div>
 
         {/* Grid */}
-        <div className="relative mt-16 grid md:grid-cols-2 lg:gap-8 gap-y-12">
+        <div className="relative mt-12 grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8">
 
           {/* Vertical Divider (Hidden on Mobile) */}
           <div className="hidden lg:block absolute left-1/2 top-4 bottom-4 w-px bg-gradient-to-b from-transparent via-slate-200 to-transparent"></div>
@@ -52,20 +52,20 @@ export default function WhyChooseUs() {
             return (
               <div
                 key={index}
-                className="group flex flex-col items-center text-center px-6 py-6 md:py-8 rounded-3xl transition-all duration-300 hover:bg-white hover:shadow-xl hover:shadow-blue-900/5 hover:-translate-y-1 ring-1 ring-transparent hover:ring-slate-100"
+                className="group flex flex-col items-center text-center px-4 py-6 sm:px-6 sm:py-8 rounded-3xl transition-all duration-300 hover:bg-white hover:shadow-xl hover:shadow-blue-900/5 hover:-translate-y-1 ring-1 ring-transparent hover:ring-slate-100"
               >
                 {/* Icon */}
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-blue-600 mb-5 transition-colors group-hover:bg-blue-600 group-hover:text-white group-hover:scale-110 duration-300 ease-out">
-                  <Icon size={24} strokeWidth={1.75} />
+                <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-blue-50 text-blue-600 mb-4 sm:mb-5 transition-colors group-hover:bg-blue-600 group-hover:text-white group-hover:scale-110 duration-300 ease-out">
+                  <Icon size={22} strokeWidth={1.75} className="sm:h-6 sm:w-6 h-5 w-5" />
                 </div>
 
                 {/* Title */}
-                <h3 className="text-lg md:text-xl font-bold tracking-tight text-slate-900">
+                <h3 className="text-base sm:text-lg lg:text-xl font-bold tracking-tight text-slate-900">
                   {item.title}
                 </h3>
 
                 {/* Description */}
-                <p className="mt-2.5 text-sm md:text-base leading-relaxed text-slate-600 max-w-sm">
+                <p className="mt-2 text-xs sm:text-sm md:text-base leading-relaxed text-slate-600 max-w-sm">
                   {item.desc}
                 </p>
               </div>

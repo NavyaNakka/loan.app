@@ -601,22 +601,25 @@ export default function ApplyLoan() {
     }
   };
 
-  const FieldError = ({ name }) =>
-    touched[name] && errors[name] ? (
-      <p className="mt-1 flex items-center gap-1 text-xs text-red-500">
-        <svg className="h-3.5 w-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-        </svg>
-        {errors[name]}
-      </p>
-    ) : null;
+  const FieldError = ({ name }) => (
+    <div className="h-4 mt-1">
+      {touched[name] && errors[name] ? (
+        <p className="flex items-center gap-1.5 text-[11px] font-bold text-red-500 tracking-wide">
+          <svg className="h-3 w-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+          </svg>
+          {errors[name]}
+        </p>
+      ) : null}
+    </div>
+  );
 
   const inputClass = (name) =>
-    `w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-all focus:ring-2 ${touched[name] && errors[name]
-      ? "border-red-400 bg-red-50 focus:ring-red-300"
+    `w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-all focus:ring-2 bg-white hover:border-slate-400 ${touched[name] && errors[name]
+      ? "border-red-400 focus:ring-red-300"
       : touched[name] && !errors[name]
-        ? "border-green-400 bg-green-50 focus:ring-green-300"
-        : "border-slate-200 bg-slate-50 focus:bg-white focus:ring-blue-300"
+        ? "border-green-400 focus:ring-green-300"
+        : "focus:border-blue-500 focus:ring-blue-500/20"
     }`;
 
   return (
@@ -642,10 +645,10 @@ export default function ApplyLoan() {
 
               {/* SECTION: Personal Information */}
               <div>
-                <h3 className="text-lg font-bold tracking-tight text-slate-900 border-b border-slate-100 pb-3 mb-5">
+                <h3 className="text-sm font-bold tracking-widest text-slate-400 uppercase border-b border-slate-200 pb-3 mb-5">
                   Personal Information
                 </h3>
-                <div className="grid gap-5 md:grid-cols-2">
+                <div className="grid gap-x-5 gap-y-3 md:grid-cols-2">
 
                   {/* Full Name */}
                   <div className="md:col-span-2">
@@ -740,11 +743,11 @@ export default function ApplyLoan() {
               </div>
 
               {/* SECTION: Loan & Employment Details */}
-              <div className="pt-2">
-                <h3 className="text-lg font-bold tracking-tight text-slate-900 border-b border-slate-100 pb-3 mb-5">
+              <div className="pt-4">
+                <h3 className="text-sm font-bold tracking-widest text-slate-400 uppercase border-b border-slate-200 pb-3 mb-5">
                   Loan & Employment Details
                 </h3>
-                <div className="grid gap-5 md:grid-cols-2">
+                <div className="grid gap-x-5 gap-y-3 md:grid-cols-2">
 
                   {/* Loan Amount */}
                   <div>
