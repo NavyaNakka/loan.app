@@ -612,39 +612,39 @@ export default function ApplyLoan() {
     ) : null;
 
   const inputClass = (name) =>
-    `input w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-all focus:ring-2 ${touched[name] && errors[name]
+    `w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-all focus:ring-2 ${touched[name] && errors[name]
       ? "border-red-400 bg-red-50 focus:ring-red-300"
       : touched[name] && !errors[name]
         ? "border-green-400 bg-green-50 focus:ring-green-300"
-        : "border-slate-200 bg-white focus:ring-blue-300"
+        : "border-slate-200 bg-slate-50 focus:bg-white focus:ring-blue-300"
     }`;
 
   return (
-    <section className="min-h-screen bg-slate-50 pt-28 pb-12 sm:pt-32 sm:pb-16">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="min-h-screen bg-slate-50 pt-24 pb-12 sm:pt-28 sm:pb-16 flex items-center justify-center">
+      <div className="w-full max-w-3xl px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="mx-auto max-w-3xl text-center">
-          <span className="inline-flex rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-700">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-blue-700">
             {formData.loanType} Application
           </span>
-          <h1 className="mt-4 text-4xl font-bold text-slate-900 sm:text-5xl">
-            Apply for your loan in a secure and simple way
+          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            Apply securely and easily
           </h1>
-          <p className="mt-4 text-lg text-slate-600">
+          <p className="mt-3 text-base text-slate-600 leading-relaxed">
             Fill in your personal details, accept the terms, and submit your application in a few steps.
           </p>
         </div>
 
-        {/* ── SWAPPED: Form LEFT, Info box RIGHT ── */}
-        <div className="mt-12 grid gap-8 lg:grid-cols-5">
+        <div className="mt-8">
+          <div className="rounded-3xl bg-white p-6 sm:p-10 shadow-xl shadow-blue-900/5 ring-1 ring-slate-100">
+            <form onSubmit={handleSubmit} noValidate className="space-y-8">
 
-          {/* LEFT — FORM */}
-          <div className="lg:col-span-3">
-            <div className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
-              <h2 className="text-2xl font-bold text-slate-900">Loan Application Form</h2>
-
-              <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-6">
+              {/* SECTION: Personal Information */}
+              <div>
+                <h3 className="text-lg font-bold tracking-tight text-slate-900 border-b border-slate-100 pb-3 mb-5">
+                  Personal Information
+                </h3>
                 <div className="grid gap-5 md:grid-cols-2">
 
                   {/* Full Name */}
@@ -736,6 +736,16 @@ export default function ApplyLoan() {
                     <FieldError name="panNumber" />
                   </div>
 
+                </div>
+              </div>
+
+              {/* SECTION: Loan & Employment Details */}
+              <div className="pt-2">
+                <h3 className="text-lg font-bold tracking-tight text-slate-900 border-b border-slate-100 pb-3 mb-5">
+                  Loan & Employment Details
+                </h3>
+                <div className="grid gap-5 md:grid-cols-2">
+
                   {/* Loan Amount */}
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-slate-700">
@@ -790,75 +800,53 @@ export default function ApplyLoan() {
                   </div>
 
                 </div>
-
-                {/* Terms & Conditions */}
-                <div className={`rounded-xl p-4 ${touched.acceptedTerms && errors.acceptedTerms ? "bg-red-50 ring-1 ring-red-300" : "bg-slate-50"}`}>
-                  <label className="flex gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="acceptedTerms"
-                      checked={formData.acceptedTerms}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      className="mt-0.5 h-4 w-4 accent-blue-600"
-                    />
-                    <span className="text-sm text-slate-700">
-                      By continuing, you agree to our{" "}
-                      <Link to="/terms" className="text-blue-600 underline">Terms & Conditions</Link>{" "}
-                      and{" "}
-                      <Link to="/privacy" className="text-blue-600 underline">Privacy Policy</Link>.
-                    </span>
-                  </label>
-                  <FieldError name="acceptedTerms" />
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full rounded-xl bg-blue-600 py-3 text-white font-semibold transition hover:bg-blue-700 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {loading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                      </svg>
-                      Submitting...
-                    </span>
-                  ) : (
-                    "Submit Application"
-                  )}
-                </button>
-
-              </form>
-            </div>
-          </div>
-
-          {/* RIGHT — INFO BOX */}
-          <div className="lg:col-span-2">
-            <div className="rounded-3xl bg-blue-600 p-8 text-white shadow-sm lg:sticky lg:top-28">
-              <h2 className="text-2xl font-bold">Why apply with us?</h2>
-              <p className="mt-3 text-blue-100">
-                A guided, secure, and professional application process designed for faster loan requests.
-              </p>
-              <div className="mt-8 space-y-4">
-                {[
-                  { title: "Simple Form", desc: "Enter your details in a clear and easy application flow." },
-                  { title: "Secure Submission", desc: "Your information is submitted through a secure process." },
-                  { title: "Quick Review", desc: "Your application is processed quickly after submission." },
-                ].map((item) => (
-                  <div key={item.title} className="rounded-2xl bg-white/10 p-5">
-                    <h3 className="text-lg font-semibold">{item.title}</h3>
-                    <p className="mt-2 text-sm text-blue-100">{item.desc}</p>
-                  </div>
-                ))}
               </div>
-            </div>
-          </div>
 
+              {/* Terms & Conditions */}
+              <div className={`rounded-xl p-4 transition-colors ${touched.acceptedTerms && errors.acceptedTerms ? "bg-red-50 ring-1 ring-red-200" : "bg-slate-50"}`}>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="acceptedTerms"
+                    checked={formData.acceptedTerms}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className="mt-1 h-4 w-4 shrink-0 accent-blue-600 rounded border-slate-300"
+                  />
+                  <span className="text-sm text-slate-600 leading-relaxed">
+                    By submitting this application, I confirm the details provided are accurate and agree to the{" "}
+                    <Link to="/terms" className="font-semibold text-blue-600 hover:text-blue-700 underline underline-offset-2">Terms & Conditions</Link>{" "}
+                    and{" "}
+                    <Link to="/privacy" className="font-semibold text-blue-600 hover:text-blue-700 underline underline-offset-2">Privacy Policy</Link>.
+                  </span>
+                </label>
+                <FieldError name="acceptedTerms" />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-2xl bg-blue-600 py-3.5 text-white font-bold tracking-wide shadow-lg shadow-blue-600/30 transition-all hover:bg-blue-700 hover:shadow-blue-600/40 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Processing Request...
+                  </span>
+                ) : (
+                  "Submit Application"
+                )}
+              </button>
+
+            </form>
+          </div>
         </div>
-      </div>
-    </section>
+
+      </div >
+    </section >
   );
 }
