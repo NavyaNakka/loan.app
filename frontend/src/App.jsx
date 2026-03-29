@@ -33,7 +33,6 @@ import ProductsSection from "./components/ProductsSection";
 import Features from "./components/Features";
 import EmiCalculator from "./components/EmiCalculator";
 import HowItWorks from "./components/HowItWorks";
-//import TrustStats from "./components/TrustStats";
 import WhyChooseUs from "./components/WhyChooseUs";
 import Footer from "./components/Footer";
 import Faq from "./components/Faq"
@@ -41,6 +40,8 @@ import Faq from "./components/Faq"
 import ApplyLoan from "./pages/ApplyLoan";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import AboutUs from "./pages/AboutUs";
+
 function HomePage() {
   return (
     <>
@@ -49,27 +50,26 @@ function HomePage() {
       <Features />
       <EmiCalculator />
       <HowItWorks />
-     {/*<TrustStats />*/}
       <WhyChooseUs />
       <Faq />
       <Footer />
-     
-    
-     
     </>
   );
 }
 
 function App() {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
       <Navbar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/apply-loan" element={<ApplyLoan />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/privacy" element={<Privacy />} />
-      </Routes>
+      <div className="flex-1">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/apply-loan" element={<ApplyLoan />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+        </Routes>
+      </div>
     </div>
   );
 }

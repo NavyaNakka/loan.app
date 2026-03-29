@@ -59,6 +59,7 @@ const schema = new mongoose.Schema(
     },
     gender: String,
     pincode: String,
+    panNumber: String, // ✅ Added PAN Number
     loanType: String,
     loanAmount: Number,
     yearlyIncome: Number,

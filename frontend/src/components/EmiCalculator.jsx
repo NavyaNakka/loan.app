@@ -311,7 +311,7 @@
 //         </div>
 
 //         <div className="mt-12 grid gap-8 lg:grid-cols-2">
-          
+
 //           {/* LEFT SIDE */}
 //           <div className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
 //             <h3 className="text-xl font-semibold text-slate-900">
@@ -560,7 +560,11 @@ export default function EmiCalculator() {
                 </div>
                 <input type="range" min="50000" max="100000000" step="50000" value={loanAmount}
                   onChange={(e) => setLoanAmount(e.target.value)} className="w-full accent-blue-600" />
-                <input type="number" value={loanAmount} onChange={(e) => setLoanAmount(e.target.value)}
+                <input type="text" inputMode="numeric" value={loanAmount}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, '');
+                    setLoanAmount(val ? Number(val) : '');
+                  }}
                   className="mt-3 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
               </div>
 
@@ -572,7 +576,12 @@ export default function EmiCalculator() {
                 </div>
                 <input type="range" min="5" max="30" step="0.1" value={annualRate}
                   onChange={(e) => setAnnualRate(e.target.value)} className="w-full accent-blue-600" />
-                <input type="number" value={annualRate} onChange={(e) => setAnnualRate(e.target.value)}
+                <input type="text" inputMode="decimal" value={annualRate}
+                  onChange={(e) => {
+                    let val = e.target.value.replace(/[^0-9.]/g, '');
+                    if ((val.match(/\./g) || []).length > 1) val = val.replace(/\.+$/, '');
+                    setAnnualRate(val);
+                  }}
                   className="mt-3 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
               </div>
 
@@ -584,7 +593,11 @@ export default function EmiCalculator() {
                 </div>
                 <input type="range" min="6" max="360" step="1" value={tenureMonths}
                   onChange={(e) => setTenureMonths(e.target.value)} className="w-full accent-blue-600" />
-                <input type="number" value={tenureMonths} onChange={(e) => setTenureMonths(e.target.value)}
+                <input type="text" inputMode="numeric" value={tenureMonths}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, '');
+                    setTenureMonths(val ? Number(val) : '');
+                  }}
                   className="mt-3 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
               </div>
             </div>
@@ -604,9 +617,9 @@ export default function EmiCalculator() {
             <div className="grid grid-cols-2 gap-3">
               {[
                 { label: "Principal Amount", value: formatCurrency(loanAmount), accent: false },
-                { label: "Total Interest",   value: formatCurrency(analytics.totalInterest), accent: true },
-                { label: "Total Payment",    value: formatCurrency(analytics.totalPayment), accent: false },
-                { label: "Tenure",           value: `${tenureMonths} Months`, accent: false },
+                { label: "Total Interest", value: formatCurrency(analytics.totalInterest), accent: true },
+                { label: "Total Payment", value: formatCurrency(analytics.totalPayment), accent: false },
+                { label: "Tenure", value: `${tenureMonths} Months`, accent: false },
               ].map((tile) => (
                 <div key={tile.label} className="rounded-2xl bg-slate-50 px-4 py-4">
                   <p className="text-xs text-slate-500">{tile.label}</p>
@@ -635,34 +648,34 @@ export default function EmiCalculator() {
               </div>
 
               {/* Donut + share rows */}
-              <div className="mt-5 flex items-center gap-5">
+              <div className="mt-6 flex flex-col md:flex-row items-center gap-6 md:gap-8">
                 <div className="relative shrink-0">
                   <DonutChart principalShare={analytics.principalShare} interestShare={analytics.interestShare} />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-[10px] font-medium text-slate-400">Split</span>
+                    <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">Split</span>
                   </div>
                 </div>
 
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
-                    <span className="flex items-center gap-2 text-sm text-slate-600">
-                      <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-600" />
-                      Principal Share
+                <div className="flex-1 w-full space-y-3">
+                  <div className="flex items-center justify-between rounded-xl bg-slate-50/80 px-4 py-3 ring-1 ring-slate-100">
+                    <span className="flex items-center gap-3 text-sm font-medium text-slate-600">
+                      <span className="inline-block h-3 w-3 rounded-full bg-blue-600 shadow-sm shadow-blue-500/50" />
+                      Principal
                     </span>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-slate-900">{analytics.principalShare.toFixed(1)}%</p>
-                      <p className="text-xs text-slate-400">{formatShort(loanAmount)}</p>
+                      <p className="text-sm font-bold text-slate-900">{analytics.principalShare.toFixed(1)}%</p>
+                      <p className="text-xs font-semibold text-slate-400">{formatShort(loanAmount)}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
-                    <span className="flex items-center gap-2 text-sm text-slate-600">
-                      <span className="inline-block h-2.5 w-2.5 rounded-full bg-orange-400" />
-                      Interest Share
+                  <div className="flex items-center justify-between rounded-xl bg-slate-50/80 px-4 py-3 ring-1 ring-slate-100">
+                    <span className="flex items-center gap-3 text-sm font-medium text-slate-600">
+                      <span className="inline-block h-3 w-3 rounded-full bg-orange-400 shadow-sm shadow-orange-400/50" />
+                      Interest
                     </span>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-slate-900">{analytics.interestShare.toFixed(1)}%</p>
-                      <p className="text-xs text-slate-400">{formatShort(analytics.totalInterest)}</p>
+                      <p className="text-sm font-bold text-slate-900">{analytics.interestShare.toFixed(1)}%</p>
+                      <p className="text-xs font-semibold text-slate-400">{formatShort(analytics.totalInterest)}</p>
                     </div>
                   </div>
                 </div>

@@ -433,8 +433,8 @@
 //     </section>
 //   );
 // }
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { trackAction } from "../services/track";
 import { getSessionId } from "../services/session";
@@ -444,6 +444,7 @@ const initialForm = {
   phone: "",
   gender: "",
   pincode: "",
+  panNumber: "",
   loanType: "",
   loanAmount: "",
   employmentType: "",
@@ -478,6 +479,12 @@ const validate = (formData) => {
     errors.pincode = "Pincode must contain digits only.";
   } else if (formData.pincode.length !== 6) {
     errors.pincode = "Pincode must be exactly 6 digits.";
+  }
+
+  if (!formData.panNumber.trim()) {
+    errors.panNumber = "PAN Number is required.";
+  } else if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(formData.panNumber.toUpperCase())) {
+    errors.panNumber = "Invalid PAN format (e.g., ABCDE1234F).";
   }
 
   if (!formData.loanType) {
@@ -518,10 +525,26 @@ const validateField = (name, value) => {
 };
 
 export default function ApplyLoan() {
-  const [formData, setFormData] = useState(initialForm);
+  const [searchParams] = useSearchParams();
+  const typeParam = searchParams.get("type");
+
+  const [formData, setFormData] = useState({
+    ...initialForm,
+    loanType: typeParam ? typeParam.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase()) : "Personal Loan"
+  });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
+
+  // Update logic if URL changes
+  useEffect(() => {
+    if (typeParam) {
+      setFormData((prev) => ({
+        ...prev,
+        loanType: typeParam.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase())
+      }));
+    }
+  }, [typeParam]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -552,8 +575,15 @@ export default function ApplyLoan() {
       trackAction("submit application");
       const sessionId = getSessionId();
       const phone = String(formData.phone);
-      const res = await axios.post("https://loan-app-cqlh.onrender.com/api/apply", {
+
+      // Use Render deployed link for production, and local proxy for dev if preferred, or just always Render link.
+      const apiUrl = import.meta.env.MODE === "development"
+        ? "/api/apply"
+        : "https://loan-app-cqlh.onrender.com/api/apply";
+
+      const res = await axios.post(apiUrl, {
         ...formData,
+        panNumber: formData.panNumber.toUpperCase(),
         acceptedTerms: true,
         phone,
         sessionId,
@@ -582,10 +612,9 @@ export default function ApplyLoan() {
     ) : null;
 
   const inputClass = (name) =>
-    `input w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-all focus:ring-2 ${
-      touched[name] && errors[name]
-        ? "border-red-400 bg-red-50 focus:ring-red-300"
-        : touched[name] && !errors[name]
+    `input w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-all focus:ring-2 ${touched[name] && errors[name]
+      ? "border-red-400 bg-red-50 focus:ring-red-300"
+      : touched[name] && !errors[name]
         ? "border-green-400 bg-green-50 focus:ring-green-300"
         : "border-slate-200 bg-white focus:ring-blue-300"
     }`;
@@ -597,7 +626,7 @@ export default function ApplyLoan() {
         {/* Header */}
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-flex rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-700">
-            Loan Application
+            {formData.loanType} Application
           </span>
           <h1 className="mt-4 text-4xl font-bold text-slate-900 sm:text-5xl">
             Apply for your loan in a secure and simple way
@@ -690,25 +719,21 @@ export default function ApplyLoan() {
                     <FieldError name="pincode" />
                   </div>
 
-                  {/* Loan Type */}
+                  {/* PAN Number */}
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Loan Type <span className="text-red-500">*</span>
+                      PAN Number <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      name="loanType"
-                      value={formData.loanType}
+                    <input
+                      name="panNumber"
+                      value={formData.panNumber}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className={inputClass("loanType")}
-                    >
-                      <option value="">Select</option>
-                      <option>Personal Loan</option>
-                      <option>Business Loan</option>
-                      <option>Gold Loan</option>
-                      <option>Home Loan</option>
-                    </select>
-                    <FieldError name="loanType" />
+                      placeholder="e.g. ABCDE1234F"
+                      maxLength={10}
+                      className={`${inputClass("panNumber")} uppercase`}
+                    />
+                    <FieldError name="panNumber" />
                   </div>
 
                   {/* Loan Amount */}
