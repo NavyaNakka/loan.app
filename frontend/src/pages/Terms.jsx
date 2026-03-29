@@ -9,7 +9,7 @@ export default function Terms() {
             Terms & Conditions
           </h1>
           <p className="mt-4 text-slate-600 text-lg">
-            Last Updated: March 2026
+         //
           </p>
         </div>
 
@@ -200,7 +200,7 @@ export default function Terms() {
               If you have any questions regarding these Terms, contact us at:
             </p>
             <p className="mt-2 font-medium text-blue-600">
-              info@aarthikafinserve.com
+            info@kerditkonnect.com
             </p>
           </section>
 

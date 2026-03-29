@@ -197,7 +197,7 @@ export default function Privacy() {
             </p>
 
             <p className="mt-3 font-semibold text-blue-600">
-              info@aarthikafinserve.com
+             info@kerditkonnect.com
             </p>
           </section>
 
