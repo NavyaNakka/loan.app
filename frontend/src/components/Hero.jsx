@@ -154,15 +154,15 @@ export default function Hero() {
     <section className="bg-slate-50">
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
         <div>
-          <span className="inline-flex items-center rounded-full bg-blue-50/50 px-4 py-1.5 text-sm font-semibold tracking-wide text-blue-700 ring-1 ring-blue-500/20 shadow-sm">
+          <span className="inline-flex items-center rounded-full bg-blue-50/50 px-3.5 py-1 text-xs font-semibold tracking-wide text-blue-700 ring-1 ring-blue-500/20 shadow-sm uppercase">
             Smart Loan Journey
           </span>
 
-          <h1 className="mt-8 text-4xl font-extrabold tracking-tight text-slate-900 leading-[1.1] sm:text-6xl md:text-7xl">
-            Check EMI, Apply, <br className="hidden md:block" />and Track Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500">Loan</span>
+          <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-slate-900 leading-[1.15] sm:text-5xl">
+            Check EMI, Apply <br className="hidden md:block" />and Track Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500">Loan</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-lg md:text-xl leading-relaxed text-slate-600">
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
             A simple and highly secured platform to estimate EMI, submit your loan
             application, provide consent, and follow lender-wise progress.
           </p>
@@ -213,35 +213,35 @@ export default function Hero() {
         </div>
 
         {/* RIGHT SIDE  */}
-        <div className="rounded-3xl bg-white p-6 sm:p-10 shadow-2xl shadow-blue-900/5 ring-1 ring-slate-100 transition-all hover:shadow-blue-900/10">
-          <div className="rounded-2xl bg-gradient-to-br from-blue-700 to-blue-500 p-8 text-white relative overflow-hidden">
+        <div className="rounded-3xl bg-white p-6 md:p-8 shadow-2xl shadow-blue-900/5 ring-1 ring-slate-100 transition-all hover:shadow-blue-900/10">
+          <div className="rounded-2xl bg-gradient-to-br from-blue-700 to-blue-500 p-6 md:p-8 text-white relative overflow-hidden">
             <div className="absolute -right-10 -bottom-10 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
-            <p className="text-sm font-semibold tracking-wide text-blue-100 uppercase">Starting from</p>
-            <h2 className="mt-2 text-4xl tracking-tight font-extrabold">Affordable EMI</h2>
-            <p className="mt-3 text-sm md:text-base leading-relaxed text-blue-100/90 max-w-sm">
+            <p className="text-xs font-semibold tracking-wider text-blue-100 uppercase">Starting from</p>
+            <h2 className="mt-1.5 text-3xl md:text-4xl tracking-tight font-extrabold">Affordable EMI</h2>
+            <p className="mt-3 text-sm leading-relaxed text-blue-100/90 max-w-sm">
               Estimate your repayment, review your loan requirement, and begin
               the application process with absolute clarity.
             </p>
           </div>
 
-          <div className="mt-8 space-y-4">
-            <div className="rounded-2xl bg-slate-50/80 p-5 ring-1 ring-slate-100 transition-colors hover:bg-slate-50">
-              <p className="text-sm font-semibold tracking-wide text-slate-500 uppercase">Loan Amount</p>
-              <p className="mt-1.5 text-xl font-bold text-slate-900">
+          <div className="mt-6 space-y-3">
+            <div className="rounded-2xl bg-slate-50/80 p-4 ring-1 ring-slate-100 transition-colors hover:bg-slate-50">
+              <p className="text-xs font-bold tracking-wide text-slate-500 uppercase">Loan Amount</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">
                 Up to ₹10,00,000
               </p>
             </div>
 
-            <div className="rounded-2xl bg-slate-50/80 p-5 ring-1 ring-slate-100 transition-colors hover:bg-slate-50">
-              <p className="text-sm font-semibold tracking-wide text-slate-500 uppercase">Application</p>
-              <p className="mt-1.5 text-xl font-bold text-slate-900">
+            <div className="rounded-2xl bg-slate-50/80 p-4 ring-1 ring-slate-100 transition-colors hover:bg-slate-50">
+              <p className="text-xs font-bold tracking-wide text-slate-500 uppercase">Application</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">
                 100% online and seamless
               </p>
             </div>
 
-            <div className="rounded-2xl bg-slate-50/80 p-5 ring-1 ring-slate-100 transition-colors hover:bg-slate-50">
-              <p className="text-sm font-semibold tracking-wide text-slate-500 uppercase">Tracking</p>
-              <p className="mt-1.5 text-xl font-bold text-slate-900">
+            <div className="rounded-2xl bg-slate-50/80 p-4 ring-1 ring-slate-100 transition-colors hover:bg-slate-50">
+              <p className="text-xs font-bold tracking-wide text-slate-500 uppercase">Tracking</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">
                 Lender-wise status updates
               </p>
             </div>

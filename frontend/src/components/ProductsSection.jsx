@@ -85,7 +85,7 @@
 //   return (
 //     <section className="bg-white py-16 sm:py-20">
 //       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
+
 //         {/* Products */}
 //         <div className="text-center">
 //           <h2 className="text-4xl font-bold text-slate-900">Our Products</h2>
@@ -190,23 +190,23 @@ function Card({ title, desc, icon: Icon, onClick, clickable }) {
   return (
     <div
       onClick={onClick}
-      className={`group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm ring-1 ring-slate-100 transition-all duration-300 
-      ${clickable ? "cursor-pointer hover:-translate-y-2 hover:shadow-xl hover:ring-blue-500/30 hover:border-blue-200" : ""}`}
+      className={`group bg-white p-6 sm:p-8 transition-all duration-300 
+      ${clickable ? "cursor-pointer hover:bg-slate-50 relative z-10 hover:shadow-xl hover:shadow-blue-900/5" : ""}`}
     >
       <div className="flex items-start justify-between">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-          <Icon size={28} strokeWidth={1.5} />
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-blue-600 ring-1 ring-slate-100 transition-colors group-hover:bg-blue-600 group-hover:text-white group-hover:ring-blue-600">
+          <Icon size={24} strokeWidth={1.5} />
         </div>
-        <span className="text-2xl text-slate-300 transition-colors group-hover:text-blue-600">
+        <span className="text-xl text-slate-300 transition-colors group-hover:text-blue-600">
           ↗
         </span>
       </div>
 
-      <h3 className="mt-6 text-xl md:text-2xl font-semibold text-slate-900 tracking-tight">
+      <h3 className="mt-5 text-lg font-bold text-slate-900 tracking-tight">
         {title}
       </h3>
 
-      <p className="mt-3 text-base md:text-lg text-slate-600 leading-relaxed">
+      <p className="mt-2.5 text-sm text-slate-600 leading-relaxed">
         {desc}
       </p>
     </div>
@@ -238,50 +238,54 @@ export default function ProductsSection() {
   return (
     <section className="bg-slate-50/50 py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
+
         {/* Products */}
-        <div className="text-center max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900">Premium Loan Products</h2>
-          <p className="mt-6 text-lg md:text-xl text-slate-600 leading-relaxed">
-            The right financial product for your needs is just a click away. Experience seamless, digitzed lending.
+        <div className="text-center max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">Premium Loan Products</h2>
+          <p className="mt-4 text-base md:text-lg text-slate-600 leading-relaxed">
+            The right financial product for your needs is just a click away. Experience seamless, digitized lending.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((item, index) => {
-            const isClickable = clickableTitles.includes(item.title);
+        <div className="mt-14 mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-200 ring-1 ring-slate-200 shadow-xl shadow-slate-200/50">
+          <div className="grid gap-[1px] sm:grid-cols-2 lg:grid-cols-3 bg-slate-200">
+            {products.map((item, index) => {
+              const isClickable = clickableTitles.includes(item.title);
 
-            return (
+              return (
+                <Card
+                  key={index}
+                  title={item.title}
+                  desc={item.desc}
+                  icon={item.icon}
+                  clickable={true}
+                  onClick={() => handleCardClick(item.title, isClickable)}
+                />
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Services */}
+        <div className="mt-24 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
+            Other Services
+          </h2>
+        </div>
+
+        <div className="mt-12 mx-auto max-w-4xl overflow-hidden rounded-3xl bg-slate-200 ring-1 ring-slate-200 shadow-xl shadow-slate-200/50">
+          <div className="grid gap-[1px] sm:grid-cols-2 bg-slate-200">
+            {services.map((item, index) => (
               <Card
                 key={index}
                 title={item.title}
                 desc={item.desc}
                 icon={item.icon}
                 clickable={true}
-                onClick={() => handleCardClick(item.title, isClickable)}
+                onClick={() => handleCardClick(item.title, false)}
               />
-            );
-          })}
-        </div>
-
-        {/* Services */}
-        <div className="mt-24 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900">
-            Other Services
-          </h2>
-        </div>
-
-        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:max-w-4xl lg:mx-auto">
-          {services.map((item, index) => (
-            <Card
-              key={index}
-              title={item.title}
-              desc={item.desc}
-              icon={item.icon}
-              clickable={true}
-              onClick={() => handleCardClick(item.title, false)}
-            />
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
