@@ -650,7 +650,7 @@ export default function ApplyLoan() {
   );
 
   const inputClass = (name) =>
-    `w-full rounded-[1.25rem] border-2 px-4 py-3 sm:py-3.5 text-[14px] sm:text-[15px] font-bold text-slate-800 outline-none transition-all placeholder:text-slate-400 placeholder:font-medium shadow-sm ${
+    `w-full rounded-[1.25rem] border-2 px-4 py-2.5 sm:py-3 text-[13px] sm:text-[14px] font-bold text-slate-800 outline-none transition-all placeholder:text-slate-400 placeholder:font-medium shadow-sm ${
       touched[name] && errors[name]
         ? "border-red-400 bg-red-50 focus:border-red-500 focus:ring-4 focus:ring-red-500/10"
         : "border-slate-200 bg-slate-50 focus:border-[#0c59a6] focus:bg-white focus:ring-4 focus:ring-[#0c59a6]/10 hover:border-slate-300"
@@ -670,7 +670,7 @@ export default function ApplyLoan() {
                 setTouched((prev) => ({ ...prev, [name]: true }));
                 setErrors((prev) => ({ ...prev, [name]: validateField(name, option) }));
               }}
-              className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3.5 sm:py-4 px-2 rounded-[1.25rem] border-2 text-[14px] font-bold transition-all active:scale-95 ${
+              className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-3 px-2 rounded-[1.25rem] border-2 text-[13px] font-bold transition-all active:scale-95 ${
                 formData[name] === option
                   ? "border-[#0c59a6] bg-[#e8f1fc] text-[#0c59a6] shadow-sm ring-1 ring-[#0c59a6]/20"
                   : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white"
@@ -728,13 +728,13 @@ export default function ApplyLoan() {
         </div>
 
         {/* Form Card */}
-        <div className="bg-white px-5 py-7 sm:px-8 sm:py-8 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl shadow-[#01142f]/20 ring-1 ring-slate-100 relative overflow-hidden transition-all duration-500 min-h-[420px]">
+        <div className="bg-white px-5 py-6 sm:px-8 sm:py-7 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl shadow-[#01142f]/20 ring-1 ring-slate-100 relative overflow-hidden transition-all duration-500 h-[460px] sm:h-[480px] flex flex-col">
           
-          <form onSubmit={handleSubmit} noValidate className="space-y-5">
+          <form onSubmit={handleSubmit} noValidate className="flex-1 flex flex-col space-y-0">
 
             {/* STEP 1: PERSONAL INFO */}
             {step === 1 && (
-              <div className="animate-in fade-in slide-in-from-bottom-6 duration-500">
+              <div className="animate-in fade-in slide-in-from-bottom-6 duration-500 flex-1 flex flex-col">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-50 flex items-center justify-center text-[#0c59a6]">
                     <User size={20} />
@@ -814,8 +814,8 @@ export default function ApplyLoan() {
                   </div>
                 </div>
 
-                <div className="pt-6 mt-2">
-                  <button type="button" onClick={nextStep} className="w-full flex items-center justify-center gap-2 rounded-[1.25rem] bg-[#0c59a6] hover:bg-[#0a4d91] py-3.5 sm:py-4 text-[14px] sm:text-[15px] text-white font-bold tracking-wide shadow-lg shadow-[#0c59a6]/20 transition-all focus:ring-4 focus:ring-[#0c59a6]/20 active:scale-[0.98]">
+                <div className="mt-auto pt-4">
+                  <button type="button" onClick={nextStep} className="w-full flex items-center justify-center gap-2 rounded-[1.25rem] bg-[#0c59a6] hover:bg-[#0a4d91] py-3 sm:py-3.5 text-[14px] sm:text-[15px] text-white font-bold tracking-wide shadow-lg shadow-[#0c59a6]/20 transition-all focus:ring-4 focus:ring-[#0c59a6]/20 active:scale-[0.98]">
                     Next Step <ArrowRight size={18} />
                   </button>
                 </div>
@@ -824,7 +824,7 @@ export default function ApplyLoan() {
 
             {/* STEP 2: FINANCIAL INFO */}
             {step === 2 && (
-              <div className="animate-in fade-in slide-in-from-right-8 duration-500">
+              <div className="animate-in fade-in slide-in-from-right-8 duration-500 flex-1 flex flex-col">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-50 flex items-center justify-center text-[#0c59a6]">
                     <Banknote size={20} />
@@ -873,11 +873,11 @@ export default function ApplyLoan() {
                   </div>
                 </div>
 
-                <div className="pt-6 mt-2 flex gap-3 sm:gap-4">
-                  <button type="button" onClick={prevStep} className="w-1/3 rounded-[1.25rem] bg-slate-100 py-3.5 sm:py-4 text-[14px] sm:text-[15px] text-slate-700 font-bold transition-all hover:bg-slate-200 focus:ring-4 focus:ring-slate-100 active:scale-[0.98]">
+                <div className="mt-auto pt-4 flex gap-3 sm:gap-4">
+                  <button type="button" onClick={prevStep} className="w-1/3 rounded-[1.25rem] bg-slate-100 py-3 sm:py-3.5 text-[14px] sm:text-[15px] text-slate-700 font-bold transition-all hover:bg-slate-200 focus:ring-4 focus:ring-slate-100 active:scale-[0.98]">
                     Back
                   </button>
-                  <button type="button" onClick={nextStep} className="w-2/3 flex items-center justify-center gap-2 rounded-[1.25rem] bg-[#0c59a6] hover:bg-[#0a4d91] py-3.5 sm:py-4 text-[14px] sm:text-[15px] text-white font-bold tracking-wide shadow-lg shadow-[#0c59a6]/20 transition-all focus:ring-4 focus:ring-[#0c59a6]/20 active:scale-[0.98]">
+                  <button type="button" onClick={nextStep} className="w-2/3 flex items-center justify-center gap-2 rounded-[1.25rem] bg-[#0c59a6] hover:bg-[#0a4d91] py-3 sm:py-3.5 text-[14px] sm:text-[15px] text-white font-bold tracking-wide shadow-lg shadow-[#0c59a6]/20 transition-all focus:ring-4 focus:ring-[#0c59a6]/20 active:scale-[0.98]">
                     Final Step <ArrowRight size={18} />
                   </button>
                 </div>
@@ -886,7 +886,7 @@ export default function ApplyLoan() {
 
             {/* STEP 3: REVIEW & SUBMIT */}
             {step === 3 && (
-              <div className="animate-in fade-in slide-in-from-right-8 duration-500">
+              <div className="animate-in fade-in slide-in-from-right-8 duration-500 flex-1 flex flex-col">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-green-50 flex items-center justify-center text-green-600">
                     <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
@@ -915,11 +915,11 @@ export default function ApplyLoan() {
                   <FieldError name="acceptedTerms" />
                 </div>
 
-                <div className="pt-6 mt-2 flex gap-3 sm:gap-4">
-                  <button type="button" onClick={prevStep} className="w-1/4 sm:w-1/3 rounded-[1.25rem] bg-slate-100 py-3.5 sm:py-4 text-[14px] sm:text-[15px] text-slate-700 font-bold transition-all hover:bg-slate-200 focus:ring-4 focus:ring-slate-100 active:scale-[0.98]">
+                <div className="mt-auto pt-4 flex gap-3 sm:gap-4">
+                  <button type="button" onClick={prevStep} className="w-1/4 sm:w-1/3 rounded-[1.25rem] bg-slate-100 py-3 sm:py-3.5 text-[14px] sm:text-[15px] text-slate-700 font-bold transition-all hover:bg-slate-200 focus:ring-4 focus:ring-slate-100 active:scale-[0.98]">
                     Back
                   </button>
-                  <button type="submit" disabled={loading} className="w-3/4 sm:w-2/3 flex-1 flex items-center justify-center gap-2 rounded-[1.25rem] bg-gradient-to-r from-[#0c59a6] to-[#07386d] hover:to-[#052b54] py-3.5 sm:py-4 text-[14px] sm:text-[15px] text-white font-bold tracking-wide shadow-lg shadow-[#0c59a6]/30 transition-all focus:ring-4 focus:ring-[#0c59a6]/20 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed">
+                  <button type="submit" disabled={loading} className="w-3/4 sm:w-2/3 flex-1 flex items-center justify-center gap-2 rounded-[1.25rem] bg-gradient-to-r from-[#0c59a6] to-[#07386d] hover:to-[#052b54] py-3 sm:py-3.5 text-[14px] sm:text-[15px] text-white font-bold tracking-wide shadow-lg shadow-[#0c59a6]/30 transition-all focus:ring-4 focus:ring-[#0c59a6]/20 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed">
                     {loading ? (
                       <span className="flex items-center justify-center gap-2">
                         <svg className="h-5 w-5 animate-spin text-white/50" viewBox="0 0 24 24" fill="none">
