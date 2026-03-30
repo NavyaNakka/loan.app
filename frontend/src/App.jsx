@@ -41,6 +41,8 @@ import ApplyLoan from "./pages/ApplyLoan";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import AboutUs from "./pages/AboutUs";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 function HomePage() {
   return (
@@ -68,6 +70,8 @@ function App() {
           <Route path="/about" element={<AboutUs />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       </div>
     </div>

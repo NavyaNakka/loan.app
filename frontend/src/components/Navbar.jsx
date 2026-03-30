@@ -225,12 +225,13 @@ export default function Navbar() {
         <Link
           to="/"
           onClick={() => trackAction("navbar home click")}
-          className="flex items-center gap-2 sm:gap-3"
+          className="flex items-center group outline-none py-1"
         >
-          <img src="/logo.png" alt="Kredit Konnect Logo" className="h-10 sm:h-14 w-auto object-contain mix-blend-multiply" />
-          <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-800">
-            Kredit Konnect
-          </span>
+          <img 
+            src="/logo.png" 
+            alt="Kredit Konnect Logo" 
+            className="h-12 sm:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-sm" 
+          />
         </Link>
 
         {/* DESKTOP MENU */}
@@ -290,8 +291,15 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* DESKTOP APPLY BUTTON */}
-        <div className="hidden md:block">
+        {/* DESKTOP APPLY AND LOGIN BUTTONS */}
+        <div className="hidden md:flex items-center gap-4">
+          <Link
+            to="/login"
+            onClick={() => trackAction("navbar login click")}
+            className="text-sm font-semibold text-slate-600 transition hover:text-blue-600"
+          >
+            Log In
+          </Link>
           <Link
             to="/apply-loan"
             onClick={() => trackAction("navbar apply now")}
@@ -354,13 +362,22 @@ export default function Navbar() {
               </div>
             </div>
 
-            <Link
-              to="/apply-loan"
-              onClick={() => { trackAction("navbar apply now"); setIsOpen(false); }}
-              className="mt-6 block w-full rounded-xl bg-blue-600 px-6 py-4 text-center text-base font-bold text-white shadow-sm transition hover:bg-blue-700 active:scale-95"
-            >
-              Apply Now
-            </Link>
+            <div className="flex flex-col gap-3 mt-6">
+              <Link
+                to="/login"
+                onClick={() => { trackAction("navbar login click"); setIsOpen(false); }}
+                className="block w-full rounded-xl border border-slate-200 px-6 py-4 text-center text-base font-bold text-slate-700 hover:bg-slate-50 transition active:scale-95"
+              >
+                Log In
+              </Link>
+              <Link
+                to="/apply-loan"
+                onClick={() => { trackAction("navbar apply now"); setIsOpen(false); }}
+                className="block w-full rounded-xl bg-blue-600 px-6 py-4 text-center text-base font-bold text-white shadow-sm transition hover:bg-blue-700 active:scale-95"
+              >
+                Apply Now
+              </Link>
+            </div>
           </div>
         </div>
       )}
