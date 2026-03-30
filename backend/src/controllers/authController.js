@@ -7,52 +7,41 @@ const generateToken = (id) => {
     });
 };
 
-export const register = async (req, res) => {
+export const sendOtp = async (req, res) => {
     try {
-        const { email, password } = req.body;
-
-        const userExists = await User.findOne({ email });
-
-        if (userExists) {
-            return res.status(400).json({ message: "User already exists" });
-        }
-
-        const user = await User.create({
-            email,
-            password,
-        });
-
-        if (user) {
-            res.status(201).json({
-                success: true,
-                _id: user._id,
-                email: user.email,
-                token: generateToken(user._id),
-            });
-        } else {
-            res.status(400).json({ message: "Invalid user data" });
-        }
+        const { phone } = req.body;
+        if (!phone) return res.status(400).json({ message: "Phone number is required" });
+        
+        // Mock sending OTP
+        console.log(`Sending Mock OTP 1234 to ${phone}`);
+        res.status(200).json({ success: true, message: "OTP sent successfully" });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
-export const login = async (req, res) => {
+export const verifyOtp = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { phone, otp } = req.body;
+        if (!phone || !otp) return res.status(400).json({ message: "Phone and OTP are required" });
 
-        const user = await User.findOne({ email });
-
-        if (user && (await user.matchPassword(password))) {
-            res.json({
-                success: true,
-                _id: user._id,
-                email: user.email,
-                token: generateToken(user._id),
-            });
-        } else {
-            res.status(401).json({ message: "Invalid email or password" });
+        // Hardcode OTP for development, later replace with real OTP service
+        if (otp !== "1234") {
+            return res.status(400).json({ message: "Invalid OTP. Use 1234 for testing." });
         }
+
+        let user = await User.findOne({ phone });
+
+        if (!user) {
+            user = await User.create({ phone });
+        }
+
+        res.json({
+            success: true,
+            _id: user._id,
+            phone: user.phone,
+            token: generateToken(user._id),
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
