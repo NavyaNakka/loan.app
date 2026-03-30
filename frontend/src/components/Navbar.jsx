@@ -165,6 +165,7 @@ import { ChevronDown, Menu, X, Landmark, CreditCard, Banknote, Wallet, Coins } f
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [loansDropdownOpen, setLoansDropdownOpen] = useState(false);
+  const [mobileLoansOpen, setMobileLoansOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const location = useLocation();
@@ -225,13 +226,16 @@ export default function Navbar() {
         <Link
           to="/"
           onClick={() => trackAction("navbar home click")}
-          className="flex items-center group outline-none py-1"
+          className="flex items-center gap-2 sm:gap-2.5 group outline-none py-1"
         >
           <img 
             src="/logo.png" 
             alt="Kredit Konnect Logo" 
-            className="h-12 sm:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-sm" 
+            className="h-8 sm:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-sm" 
           />
+          <span className="text-xl sm:text-[1.4rem] font-extrabold tracking-tight text-[#01142f] leading-none">
+            Kredit<span className="text-[#0c59a6]">Konnect</span>
+          </span>
         </Link>
 
         {/* DESKTOP MENU */}
@@ -347,19 +351,34 @@ export default function Navbar() {
               About Us
             </Link>
 
+            {/* MOBILE LOANS DROPDOWN (Accordion) */}
             <div className="pt-2 pb-1">
-              <p className="px-4 text-xs font-bold tracking-wider text-slate-400 uppercase">Loans</p>
-              <div className="mt-2 space-y-1">
-                {loanOptions.map((loan) => (
-                  <button
-                    key={loan.type}
-                    onClick={() => handleLoanSelect(loan.type)}
-                    className="block w-full rounded-xl px-4 py-3 text-left text-base font-semibold text-slate-600 hover:bg-blue-50 hover:text-blue-700 pl-6"
-                  >
-                    {loan.name}
-                  </button>
-                ))}
-              </div>
+              <button
+                type="button"
+                onClick={() => setMobileLoansOpen(!mobileLoansOpen)}
+                className={`flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-base font-semibold outline-none transition-colors ${mobileLoansOpen ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-blue-50 hover:text-blue-700"}`}
+              >
+                Loans
+                <ChevronDown size={20} className={`transition-transform duration-200 ${mobileLoansOpen ? "rotate-180 text-blue-600" : "text-slate-400"}`} />
+              </button>
+
+              {mobileLoansOpen && (
+                <div className="mt-1 space-y-1 animate-in slide-in-from-top-2 fade-in duration-200">
+                  {loanOptions.map((loan) => {
+                    const Icon = loan.icon;
+                    return (
+                      <button
+                        key={loan.type}
+                        onClick={() => handleLoanSelect(loan.type)}
+                        className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold text-slate-600 hover:bg-blue-50 hover:text-blue-700 pl-6"
+                      >
+                        <Icon size={18} className="text-blue-500 opacity-80" />
+                        {loan.name}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col gap-3 mt-6">
