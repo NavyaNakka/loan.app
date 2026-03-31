@@ -1,6 +1,7 @@
  
 import UserInfo from "../models/UserInfo.js";
 import UserStatusHistory from "../models/UserStatusHistory.js";
+import { validatePAN, getPANError } from "../utils/panValidator.js";
 
 export const applyLoan = async (req, res) => {
   try {
@@ -15,9 +16,16 @@ export const applyLoan = async (req, res) => {
       });
     }
 
+    // ✅ PAN number validation with checksum
     if (!panNumber) {
       return res.status(400).json({
         message: "PAN number is required",
+      });
+    }
+
+    if (!validatePAN(panNumber)) {
+      return res.status(400).json({
+        message: getPANError(panNumber) || "Invalid PAN number",
       });
     }
 
