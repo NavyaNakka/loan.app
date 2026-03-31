@@ -650,7 +650,7 @@ export default function ApplyLoan() {
   );
 
   const inputClass = (name) =>
-    `w-full rounded-[1.25rem] border-2 px-4 py-2.5 sm:py-3 text-[13px] sm:text-[14px] font-bold text-slate-800 outline-none transition-all placeholder:text-slate-400 placeholder:font-medium shadow-sm ${
+    `w-full rounded-[1rem] border-2 pr-3 sm:pr-4 py-2 sm:py-2.5 text-[12px] sm:text-[13px] font-bold text-slate-800 outline-none transition-all placeholder:text-slate-400 placeholder:font-medium shadow-sm ${
       touched[name] && errors[name]
         ? "border-red-400 bg-red-50 focus:border-red-500 focus:ring-4 focus:ring-red-500/10"
         : "border-slate-200 bg-slate-50 focus:border-[#0c59a6] focus:bg-white focus:ring-4 focus:ring-[#0c59a6]/10 hover:border-slate-300"
@@ -670,13 +670,13 @@ export default function ApplyLoan() {
                 setTouched((prev) => ({ ...prev, [name]: true }));
                 setErrors((prev) => ({ ...prev, [name]: validateField(name, option) }));
               }}
-              className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-3 px-2 rounded-[1.25rem] border-2 text-[13px] font-bold transition-all active:scale-95 ${
+              className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 px-2 rounded-[1rem] border-2 text-[12px] font-bold transition-all active:scale-95 ${
                 formData[name] === option
                   ? "border-[#0c59a6] bg-[#e8f1fc] text-[#0c59a6] shadow-sm ring-1 ring-[#0c59a6]/20"
                   : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white"
               }`}
             >
-              {IconComponent && <IconComponent size={18} className={formData[name] === option ? "text-[#0c59a6]" : "text-slate-400"} />}
+              {IconComponent && <IconComponent size={16} className={formData[name] === option ? "text-[#0c59a6]" : "text-slate-400"} />}
               {option}
             </button>
           );
@@ -696,20 +696,20 @@ export default function ApplyLoan() {
       <div className="w-full max-w-[560px] px-5 sm:px-6 relative z-10 pt-20 sm:pt-26">
         
         {/* Header Text */}
-        <div className="mx-auto text-center pb-8 sm:pb-10">
-          <span className="inline-flex rounded-full bg-white/10 border border-white/20 backdrop-blur-md px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-[#66b2ff] shadow-xl">
+        <div className="mx-auto text-center pb-6 sm:pb-8">
+          <span className="inline-flex rounded-full bg-white/10 border border-white/20 backdrop-blur-md px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-[#66b2ff] shadow-xl">
             {formData.loanType}
           </span>
-          <h1 className="mt-4 text-[1.8rem] leading-tight font-black tracking-tight text-white sm:text-[2.2rem] drop-shadow-md">
+          <h1 className="mt-3 text-[1.6rem] leading-none font-black tracking-tight text-white sm:text-[2rem] drop-shadow-md">
             Unlock Your Eligibility
           </h1>
-          <p className="mt-2 text-[13px] sm:text-[14px] text-blue-100/90 font-medium leading-relaxed">
+          <p className="mt-1.5 text-[12px] sm:text-[13px] text-blue-100/90 font-medium">
             A fast, secure, and fully guided application journey.
           </p>
         </div>
 
         {/* 3-Step Wizard Progress Bar */}
-        <div className="mb-8 px-2 sm:px-6">
+        <div className="mb-6 sm:mb-8 px-2 sm:px-4">
           <div className="flex items-center justify-between relative z-0">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-white/10 -z-10 rounded-full"></div>
             <div className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#479dfc] shadow-[0_0_12px_#66b2ff] -z-10 rounded-full transition-all duration-500 ease-out" style={{ width: `${((step - 1) / 2) * 100}%` }}></div>
@@ -728,95 +728,95 @@ export default function ApplyLoan() {
         </div>
 
         {/* Form Card */}
-        <div className="bg-white px-5 py-6 sm:px-8 sm:py-7 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl shadow-[#01142f]/20 ring-1 ring-slate-100 relative overflow-hidden transition-all duration-500 h-[460px] sm:h-[480px] flex flex-col">
+        <div className="bg-white px-4 py-5 sm:px-8 sm:py-7 rounded-[1.25rem] sm:rounded-[2rem] shadow-2xl shadow-[#01142f]/20 ring-1 ring-slate-100 relative transition-all duration-500 min-h-[460px] h-auto flex flex-col">
           
           <form onSubmit={handleSubmit} noValidate className="flex-1 flex flex-col space-y-0">
 
             {/* STEP 1: PERSONAL INFO */}
             {step === 1 && (
               <div className="animate-in fade-in slide-in-from-bottom-6 duration-500 flex-1 flex flex-col">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-50 flex items-center justify-center text-[#0c59a6]">
-                    <User size={20} />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-blue-50 flex items-center justify-center text-[#0c59a6]">
+                    <User size={16} />
                   </div>
                   <div>
-                    <h2 className="text-[18px] sm:text-xl font-black text-[#01142f]">Personal Details</h2>
-                    <p className="text-[12px] sm:text-[13px] font-bold text-slate-400 mt-0.5">Let's start with your basic info.</p>
+                    <h2 className="text-[16px] sm:text-[18px] font-black text-[#01142f] leading-none">Personal Details</h2>
+                    <p className="text-[11px] sm:text-[12px] font-bold text-slate-400 mt-0.5">Let's start with your basic info.</p>
                   </div>
                 </div>
 
-                <div className="space-y-4 sm:space-y-5 pb-2">
+                <div className="space-y-3 sm:space-y-4 pb-2">
                   {/* Full Name */}
                   <div>
-                    <label className="mb-1.5 block text-[11px] sm:text-[12px] font-bold tracking-widest text-slate-700 uppercase">
-                      Full Name (As per PAN) <span className="text-red-500">*</span>
+                    <label className="mb-1 block text-[10px] sm:text-[11px] font-bold tracking-widest text-slate-700 uppercase">
+                      Full Name <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                        <User size={18} />
+                      <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                        <User size={16} />
                       </div>
-                      <input name="fullName" value={formData.fullName} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. Rahul Sharma" className={`${inputClass("fullName")} pl-[3.25rem]`} />
+                      <input name="fullName" value={formData.fullName} onChange={handleChange} onBlur={handleBlur} placeholder="Rahul Sharma" className={`${inputClass("fullName")} pl-[2.75rem]`} />
                     </div>
                     <FieldError name="fullName" />
                   </div>
 
                   {/* Phone & PAN Grid */}
-                  <div className="grid gap-4 sm:gap-5 md:grid-cols-2">
+                  <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
                     <div>
-                      <label className="mb-1.5 block text-[11px] sm:text-[12px] font-bold tracking-widest text-slate-700 uppercase">
+                      <label className="mb-1 block text-[10px] sm:text-[11px] font-bold tracking-widest text-slate-700 uppercase">
                         Mobile Number <span className="text-red-500">*</span>
                       </label>
                       <div className="relative flex items-center">
-                        <div className="absolute left-4 text-slate-400 pointer-events-none">
-                          <Phone size={18} />
+                        <div className="absolute left-3.5 text-slate-400 pointer-events-none">
+                          <Phone size={16} />
                         </div>
-                        <span className="absolute left-[2.4rem] text-[15px] font-bold text-slate-400 border-r-2 border-slate-200 pr-2">+91</span>
-                        <input name="phone" value={formData.phone} onChange={handleChange} onBlur={handleBlur} placeholder="10-digit number" maxLength={10} inputMode="numeric" className={`${inputClass("phone")} pl-[5.5rem] tracking-widest`} />
+                        <span className="absolute left-[2.2rem] text-[13px] font-bold text-slate-400 border-r-2 border-slate-200 pr-1.5">+91</span>
+                        <input name="phone" value={formData.phone} onChange={handleChange} onBlur={handleBlur} placeholder="10-digit number" maxLength={10} inputMode="numeric" className={`${inputClass("phone")} pl-[4.75rem] tracking-widest`} />
                       </div>
                       <FieldError name="phone" />
                     </div>
 
                     <div>
-                      <label className="mb-1.5 block text-[11px] sm:text-[12px] font-bold tracking-widest text-slate-700 uppercase">
+                      <label className="mb-1 block text-[10px] sm:text-[11px] font-bold tracking-widest text-slate-700 uppercase">
                         PAN Number <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
-                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                          <CreditCard size={18} />
+                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                          <CreditCard size={16} />
                         </div>
-                        <input name="panNumber" value={formData.panNumber} onChange={handleChange} onBlur={handleBlur} placeholder="ABCDE1234F" maxLength={10} className={`${inputClass("panNumber")} uppercase pl-[3.25rem]`} />
+                        <input name="panNumber" value={formData.panNumber} onChange={handleChange} onBlur={handleBlur} placeholder="ABCDE1234F" maxLength={10} className={`${inputClass("panNumber")} uppercase pl-[2.75rem]`} />
                       </div>
                       <FieldError name="panNumber" />
                     </div>
                   </div>
 
                   {/* Gender & Pincode Grid */}
-                  <div className="grid gap-4 sm:gap-5 md:grid-cols-2">
+                  <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
                     <div>
-                      <label className="mb-1.5 block text-[11px] sm:text-[12px] font-bold tracking-widest text-slate-700 uppercase">
+                      <label className="mb-1 block text-[10px] sm:text-[11px] font-bold tracking-widest text-slate-700 uppercase">
                         Gender <span className="text-red-500">*</span>
                       </label>
                       {renderTileSelector("gender", ["Male", "Female"], [UserCircle, UserCircle])}
                     </div>
                     
                     <div>
-                      <label className="mb-1.5 block text-[11px] sm:text-[12px] font-bold tracking-widest text-slate-700 uppercase">
+                      <label className="mb-1 block text-[10px] sm:text-[11px] font-bold tracking-widest text-slate-700 uppercase">
                         Current Pincode <span className="text-red-500">*</span>
                       </label>
                       <div className="relative h-full">
-                        <div className="absolute left-4 top-[1.65rem] -translate-y-1/2 text-slate-400 pointer-events-none">
-                          <MapPin size={18} />
+                        <div className="absolute left-3.5 top-[1.4rem] -translate-y-1/2 text-slate-400 pointer-events-none">
+                          <MapPin size={16} />
                         </div>
-                        <input name="pincode" value={formData.pincode} onChange={handleChange} onBlur={handleBlur} placeholder="6-digit pincode" maxLength={6} inputMode="numeric" className={`${inputClass("pincode")} h-[3.4rem] tracking-widest pl-[3.25rem]`} />
+                        <input name="pincode" value={formData.pincode} onChange={handleChange} onBlur={handleBlur} placeholder="6-digit PIN" maxLength={6} inputMode="numeric" className={`${inputClass("pincode")} h-[2.8rem] sm:h-[3.2rem] tracking-widest pl-[2.75rem]`} />
                       </div>
                       <FieldError name="pincode" />
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-auto pt-4">
-                  <button type="button" onClick={nextStep} className="w-full flex items-center justify-center gap-2 rounded-[1.25rem] bg-[#0c59a6] hover:bg-[#0a4d91] py-3 sm:py-3.5 text-[14px] sm:text-[15px] text-white font-bold tracking-wide shadow-lg shadow-[#0c59a6]/20 transition-all focus:ring-4 focus:ring-[#0c59a6]/20 active:scale-[0.98]">
-                    Next Step <ArrowRight size={18} />
+                <div className="mt-4 sm:mt-auto pt-2 sm:pt-4">
+                  <button type="button" onClick={nextStep} className="w-full flex items-center justify-center gap-2 rounded-[1rem] sm:rounded-[1.25rem] bg-[#0c59a6] hover:bg-[#0a4d91] py-2.5 sm:py-3.5 text-[13px] sm:text-[14px] text-white font-bold tracking-wide shadow-lg shadow-[#0c59a6]/20 transition-all focus:ring-4 focus:ring-[#0c59a6]/20 active:scale-[0.98]">
+                    Next Step <ArrowRight size={16} />
                   </button>
                 </div>
               </div>
@@ -825,20 +825,20 @@ export default function ApplyLoan() {
             {/* STEP 2: FINANCIAL INFO */}
             {step === 2 && (
               <div className="animate-in fade-in slide-in-from-right-8 duration-500 flex-1 flex flex-col">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-50 flex items-center justify-center text-[#0c59a6]">
-                    <Banknote size={20} />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-blue-50 flex items-center justify-center text-[#0c59a6]">
+                    <Banknote size={16} />
                   </div>
                   <div>
-                    <h2 className="text-[18px] sm:text-xl font-black text-[#01142f]">Financial Details</h2>
-                    <p className="text-[12px] sm:text-[13px] font-bold text-slate-400 mt-0.5">Tell us about your income & requirements.</p>
+                    <h2 className="text-[16px] sm:text-[18px] font-black text-[#01142f] leading-none">Financial Details</h2>
+                    <p className="text-[11px] sm:text-[12px] font-bold text-slate-400 mt-0.5">Tell us about your income & requirements.</p>
                   </div>
                 </div>
 
-                <div className="space-y-4 sm:space-y-5 pb-2">
+                <div className="space-y-3 sm:space-y-4 pb-2">
                   {/* Employment Type */}
                   <div>
-                    <label className="mb-1.5 block text-[11px] sm:text-[12px] font-bold tracking-widest text-slate-700 uppercase">
+                    <label className="mb-1 block text-[10px] sm:text-[11px] font-bold tracking-widest text-slate-700 uppercase">
                       Employment Type <span className="text-red-500">*</span>
                     </label>
                     {renderTileSelector("employmentType", ["Salaried", "Self Employed"], [Briefcase, Store])}
@@ -846,39 +846,39 @@ export default function ApplyLoan() {
 
                   {/* Yearly Income */}
                   <div>
-                    <label className="mb-1.5 block text-[11px] sm:text-[12px] font-bold tracking-widest text-slate-700 uppercase">
+                    <label className="mb-1 block text-[10px] sm:text-[11px] font-bold tracking-widest text-slate-700 uppercase">
                       Yearly Income <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0c59a6]/50 pointer-events-none">
-                        <IndianRupee size={18} />
+                      <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0c59a6]/50 pointer-events-none">
+                        <IndianRupee size={16} />
                       </div>
-                      <input name="yearlyIncome" value={formData.yearlyIncome} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. 600000" inputMode="numeric" className={`${inputClass("yearlyIncome")} pl-[3.25rem]`} />
+                      <input name="yearlyIncome" value={formData.yearlyIncome} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. 600000" inputMode="numeric" className={`${inputClass("yearlyIncome")} pl-[2.75rem]`} />
                     </div>
                     <FieldError name="yearlyIncome" />
                   </div>
 
                   {/* Loan Amount */}
                   <div>
-                    <label className="mb-1.5 block text-[11px] sm:text-[12px] font-bold tracking-widest text-slate-700 uppercase">
+                    <label className="mb-1 block text-[10px] sm:text-[11px] font-bold tracking-widest text-slate-700 uppercase">
                       Required Loan Amount <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0c59a6]/50 pointer-events-none">
-                        <Banknote size={18} />
+                      <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0c59a6]/50 pointer-events-none">
+                        <Banknote size={16} />
                       </div>
-                      <input name="loanAmount" value={formData.loanAmount} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. 500000" inputMode="numeric" className={`${inputClass("loanAmount")} pl-[3.25rem] text-[#0c59a6]`} />
+                      <input name="loanAmount" value={formData.loanAmount} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. 500000" inputMode="numeric" className={`${inputClass("loanAmount")} pl-[2.75rem] text-[#0c59a6]`} />
                     </div>
                     <FieldError name="loanAmount" />
                   </div>
                 </div>
 
-                <div className="mt-auto pt-4 flex gap-3 sm:gap-4">
-                  <button type="button" onClick={prevStep} className="w-1/3 rounded-[1.25rem] bg-slate-100 py-3 sm:py-3.5 text-[14px] sm:text-[15px] text-slate-700 font-bold transition-all hover:bg-slate-200 focus:ring-4 focus:ring-slate-100 active:scale-[0.98]">
+                <div className="mt-4 sm:mt-auto pt-2 sm:pt-4 flex gap-3 sm:gap-4">
+                  <button type="button" onClick={prevStep} className="w-1/3 rounded-[1rem] sm:rounded-[1.25rem] bg-slate-100 py-2.5 sm:py-3.5 text-[13px] sm:text-[14px] text-slate-700 font-bold transition-all hover:bg-slate-200 focus:ring-4 focus:ring-slate-100 active:scale-[0.98]">
                     Back
                   </button>
-                  <button type="button" onClick={nextStep} className="w-2/3 flex items-center justify-center gap-2 rounded-[1.25rem] bg-[#0c59a6] hover:bg-[#0a4d91] py-3 sm:py-3.5 text-[14px] sm:text-[15px] text-white font-bold tracking-wide shadow-lg shadow-[#0c59a6]/20 transition-all focus:ring-4 focus:ring-[#0c59a6]/20 active:scale-[0.98]">
-                    Final Step <ArrowRight size={18} />
+                  <button type="button" onClick={nextStep} className="w-2/3 flex items-center justify-center gap-2 rounded-[1rem] sm:rounded-[1.25rem] bg-[#0c59a6] hover:bg-[#0a4d91] py-2.5 sm:py-3.5 text-[13px] sm:text-[14px] text-white font-bold tracking-wide shadow-lg shadow-[#0c59a6]/20 transition-all focus:ring-4 focus:ring-[#0c59a6]/20 active:scale-[0.98]">
+                    Final Step <ArrowRight size={16} />
                   </button>
                 </div>
               </div>
@@ -887,49 +887,51 @@ export default function ApplyLoan() {
             {/* STEP 3: REVIEW & SUBMIT */}
             {step === 3 && (
               <div className="animate-in fade-in slide-in-from-right-8 duration-500 flex-1 flex flex-col">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-green-50 flex items-center justify-center text-green-600">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                   </div>
                   <div>
-                    <h2 className="text-[18px] sm:text-xl font-black text-[#01142f]">Finalize Application</h2>
-                    <p className="text-[12px] sm:text-[13px] font-bold text-slate-400 mt-0.5">Please confirm details and apply.</p>
+                    <h2 className="text-[16px] sm:text-[18px] font-black text-[#01142f] leading-none">Finalize Application</h2>
+                    <p className="text-[11px] sm:text-[12px] font-bold text-slate-400 mt-0.5">Please confirm details and apply.</p>
                   </div>
                 </div>
 
-                <div className="bg-slate-50/50 p-5 rounded-2xl border-2 border-slate-100 mb-6 space-y-3 sm:space-y-4">
-                  <h4 className="text-[10px] sm:text-[11px] font-bold tracking-widest text-slate-400 uppercase border-b-2 border-slate-200 pb-2.5">Application Summary</h4>
-                  <div className="flex justify-between items-center"><span className="text-[11px] sm:text-[12px] text-slate-500 font-bold uppercase tracking-wide">Name</span><span className="font-black text-[13px] sm:text-[14px] text-slate-900">{formData.fullName}</span></div>
-                  <div className="flex justify-between items-center"><span className="text-[11px] sm:text-[12px] text-slate-500 font-bold uppercase tracking-wide">Loan Type</span><span className="font-black text-[12px] sm:text-[13px] text-[#0c59a6] bg-blue-50 px-2 sm:px-3 py-1 rounded-full">{formData.loanType}</span></div>
-                  <div className="flex justify-between items-center"><span className="text-[11px] sm:text-[12px] text-slate-500 font-bold uppercase tracking-wide">Requested</span><span className="font-black text-[#0c59a6] text-[15px] sm:text-[16px]">₹ {formData.loanAmount}</span></div>
+                <div className="space-y-3 sm:space-y-4 pb-2">
+                  <div className="bg-slate-50/50 p-4 rounded-[1rem] border-2 border-slate-100 mb-4 space-y-2.5 sm:space-y-3">
+                    <h4 className="text-[10px] font-bold tracking-widest text-slate-400 uppercase border-b-2 border-slate-200 pb-2">Application Summary</h4>
+                    <div className="flex justify-between items-center"><span className="text-[10px] sm:text-[11px] text-slate-500 font-bold uppercase tracking-wide">Name</span><span className="font-black text-[12px] sm:text-[13px] text-slate-900">{formData.fullName}</span></div>
+                    <div className="flex justify-between items-center"><span className="text-[10px] sm:text-[11px] text-slate-500 font-bold uppercase tracking-wide">Loan Type</span><span className="font-black text-[11px] sm:text-[12px] text-[#0c59a6] bg-blue-50 px-2 sm:px-3 py-1 rounded-[0.5rem]">{formData.loanType}</span></div>
+                    <div className="flex justify-between items-center"><span className="text-[10px] sm:text-[11px] text-slate-500 font-bold uppercase tracking-wide">Requested</span><span className="font-black text-[#0c59a6] text-[14px] sm:text-[15px]">₹ {formData.loanAmount}</span></div>
+                  </div>
+
+                  {/* Terms & Conditions */}
+                  <div className={`rounded-[1rem] p-3 sm:p-4 border-2 transition-colors duration-300 ${touched.acceptedTerms && errors.acceptedTerms ? "bg-red-50 border-red-200 shadow-sm" : "bg-white border-slate-100 hover:border-[#0c59a6]/30"}`}>
+                    <label className="flex items-start gap-2.5 cursor-pointer">
+                      <input type="checkbox" name="acceptedTerms" checked={formData.acceptedTerms} onChange={handleChange} onBlur={handleBlur} className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#0c59a6] rounded border-slate-300 pointer-events-none" />
+                      <span className="text-[11px] sm:text-[12px] text-slate-600 leading-relaxed font-semibold">
+                        I confirm details are accurate and authorize Kredit Konnect to fetch data as per <Link to="/terms" className="text-[#0c59a6] hover:underline font-bold">T&C</Link>.
+                      </span>
+                    </label>
+                    <FieldError name="acceptedTerms" />
+                  </div>
                 </div>
 
-                {/* Terms & Conditions */}
-                <div className={`rounded-2xl p-4 sm:p-5 border-2 transition-colors duration-300 ${touched.acceptedTerms && errors.acceptedTerms ? "bg-red-50 border-red-200 shadow-sm" : "bg-white border-slate-100 hover:border-[#0c59a6]/30"}`}>
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input type="checkbox" name="acceptedTerms" checked={formData.acceptedTerms} onChange={handleChange} onBlur={handleBlur} className="mt-0.5 h-4 w-4 shrink-0 accent-[#0c59a6] rounded border-slate-300 pointer-events-none" />
-                    <span className="text-[12px] sm:text-[13px] text-slate-600 leading-relaxed font-semibold">
-                      I confirm the details provided are accurate and authorize Kredit Konnect to fetch my credit information as per the <Link to="/terms" className="text-[#0c59a6] hover:underline font-bold">Terms & Conditions</Link>.
-                    </span>
-                  </label>
-                  <FieldError name="acceptedTerms" />
-                </div>
-
-                <div className="mt-auto pt-4 flex gap-3 sm:gap-4">
-                  <button type="button" onClick={prevStep} className="w-1/4 sm:w-1/3 rounded-[1.25rem] bg-slate-100 py-3 sm:py-3.5 text-[14px] sm:text-[15px] text-slate-700 font-bold transition-all hover:bg-slate-200 focus:ring-4 focus:ring-slate-100 active:scale-[0.98]">
+                <div className="mt-4 sm:mt-auto pt-2 sm:pt-4 flex gap-3 sm:gap-4 shrink-0">
+                  <button type="button" onClick={prevStep} className="w-1/4 sm:w-1/3 rounded-[1rem] sm:rounded-[1.25rem] bg-slate-100 py-2.5 sm:py-3.5 text-[13px] sm:text-[14px] text-slate-700 font-bold transition-all hover:bg-slate-200 focus:ring-4 focus:ring-slate-100 active:scale-[0.98]">
                     Back
                   </button>
-                  <button type="submit" disabled={loading} className="w-3/4 sm:w-2/3 flex-1 flex items-center justify-center gap-2 rounded-[1.25rem] bg-gradient-to-r from-[#0c59a6] to-[#07386d] hover:to-[#052b54] py-3 sm:py-3.5 text-[14px] sm:text-[15px] text-white font-bold tracking-wide shadow-lg shadow-[#0c59a6]/30 transition-all focus:ring-4 focus:ring-[#0c59a6]/20 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed">
+                  <button type="submit" disabled={loading} className="w-3/4 sm:w-2/3 flex-1 flex items-center justify-center gap-2 rounded-[1rem] sm:rounded-[1.25rem] bg-gradient-to-r from-[#0c59a6] to-[#07386d] hover:to-[#052b54] py-2.5 sm:py-3.5 text-[13px] sm:text-[14px] text-white font-bold tracking-wide shadow-lg shadow-[#0c59a6]/30 transition-all focus:ring-4 focus:ring-[#0c59a6]/20 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed">
                     {loading ? (
                       <span className="flex items-center justify-center gap-2">
-                        <svg className="h-5 w-5 animate-spin text-white/50" viewBox="0 0 24 24" fill="none">
+                        <svg className="h-4 w-4 animate-spin text-white/50" viewBox="0 0 24 24" fill="none">
                           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                           <path fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                         </svg>
-                        Processing...
+                        Wait...
                       </span>
                     ) : (
-                      <>Submit Application <ArrowRight size={18} /></>
+                      <>Apply <ArrowRight size={16} /></>
                     )}
                   </button>
                 </div>
