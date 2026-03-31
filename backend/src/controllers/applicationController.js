@@ -36,6 +36,13 @@ export const applyLoan = async (req, res) => {
       }
     }
 
+    // ✅ Convert number fields to actual numbers
+    const cleanFormData = {
+      ...formData,
+      loanAmount: parseInt(formData.loanAmount) || 0,
+      yearlyIncome: parseInt(formData.yearlyIncome) || 0,
+    };
+
     let user;
     const lookup = { panNumber };
 
@@ -46,7 +53,7 @@ export const applyLoan = async (req, res) => {
       user = await UserInfo.findOneAndUpdate(
         lookup,
         {
-          ...formData,
+          ...cleanFormData,
           panNumber,
           ...(phone ? { phone } : {}),
           sessionId,
@@ -58,7 +65,7 @@ export const applyLoan = async (req, res) => {
     } else {
       console.log("✅ Creating new user with PAN:", panNumber);
       user = await UserInfo.create({
-        ...formData,
+        ...cleanFormData,
         panNumber,
         ...(phone ? { phone } : {}),
         sessionId,
