@@ -4,7 +4,6 @@ import axios from "axios";
 import { trackAction } from "../services/track";
 import { getSessionId } from "../services/session";
 import { useNavigate } from "react-router-dom";
-import { validatePAN, getPANError } from "../utils/panValidator";
 
 const API_BASE = import.meta.env.MODE === "development"
   ? "http://localhost:5000"
@@ -31,15 +30,8 @@ const validateDetails = (data) => {
   if (!data.pincode.trim()) errors.pincode = "Pincode is required.";
   else if (!/^\d+$/.test(data.pincode)) errors.pincode = "Pincode must contain digits only.";
   else if (data.pincode.length !== 6) errors.pincode = "Pincode must be exactly 6 digits.";
-  
-  // ✅ Proper PAN validation with checksum
-  if (!data.panNumber.trim()) {
-    errors.panNumber = "PAN Number is required.";
-  } else {
-    const panError = getPANError(data.panNumber);
-    if (panError) errors.panNumber = panError;
-  }
-  
+  if (!data.panNumber.trim()) errors.panNumber = "PAN Number is required.";
+  else if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(data.panNumber.toUpperCase())) errors.panNumber = "Invalid PAN format (e.g., ABCDE1234F).";
   if (!data.loanType) errors.loanType = "Please select a loan type.";
   if (!data.loanAmount.toString().trim()) errors.loanAmount = "Loan amount is required.";
   else if (!/^\d+(\.\d{1,2})?$/.test(data.loanAmount)) errors.loanAmount = "Enter a valid loan amount (digits only).";
@@ -132,13 +124,7 @@ export default function ApplyLoan() {
   // ── Details Handlers ──────────────────────────────────────────────────────────
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    let newValue = type === "checkbox" ? checked : value;
-
-    // ✅ Special handling for PAN - uppercase and length limit
-    if (name === "panNumber") {
-      newValue = String(newValue).toUpperCase().slice(0, 10);
-    }
-
+    const newValue = type === "checkbox" ? checked : value;
     setFormData((prev) => ({ ...prev, [name]: newValue }));
     if (touched[name]) {
       setErrors((prev) => ({ ...prev, [name]: validateField(name, newValue) }));
@@ -163,27 +149,39 @@ export default function ApplyLoan() {
       setLoading(true);
       trackAction("submit application");
       const sessionId = getSessionId();
-      await axios.post(`${API_BASE}/api/apply`, {
+      
+      const submitData = {
         ...formData,
         phone: verifiedPhone,
         panNumber: formData.panNumber.toUpperCase(),
         acceptedTerms: true,
         sessionId,
-      });
+      };
+      
+      console.log("🔍 Submitting application with data:", submitData);
+      console.log("🔍 API_BASE:", API_BASE);
+      
+      const response = await axios.post(`${API_BASE}/api/apply`, submitData);
+      console.log("✅ Success response:", response);
+      
       alert("✅ Application submitted successfully!");
       setFormData(initialDetails);
       setErrors({});
       setTouched({});
-      // Redirect to track application page instead of resetting to OTP
       navigate("/track-application");
-      setStep("otp"); // Optionally reset step for next time
+      setStep("otp");
       setPhone("");
       setOtp("");
       setOtpSent(false);
       setVerifiedPhone("");
     } catch (error) {
-      console.error("❌ Submit Error:", error);
-      alert("❌ Failed to submit application. Please try again.");
+      console.error("❌ Submit Error Details:", {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        message: error.message,
+      });
+      alert(`❌ Failed to submit: ${error.response?.data?.message || error.response?.data?.error || error.message}`);
     } finally {
       setLoading(false);
     }
@@ -389,20 +387,7 @@ export default function ApplyLoan() {
               </div>
               <div className="sm:col-span-2">
                 <label className="mb-1.5 block text-sm font-medium text-slate-700">PAN Number <span className="text-red-500">*</span></label>
-                <input 
-                  name="panNumber" 
-                  value={formData.panNumber} 
-                  onChange={handleChange} 
-                  onBlur={handleBlur} 
-                  placeholder="e.g. ABCDE1234F" 
-                  maxLength={10}
-                  onKeyPress={(e) => {
-                    if (!/[A-Za-z0-9]/.test(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
-                  className={`${inputClass("panNumber")} uppercase`} 
-                />
+                <input name="panNumber" value={formData.panNumber} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. ABCDE1234F" maxLength={10} className={`${inputClass("panNumber")} uppercase`} />
                 <FieldError name="panNumber" />
               </div>
             </div>
