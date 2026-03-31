@@ -43,35 +43,16 @@ export const applyLoan = async (req, res) => {
       yearlyIncome: parseInt(formData.yearlyIncome) || 0,
     };
 
-    let user;
-    const lookup = { panNumber };
-
-    const existingUser = await UserInfo.findOne(lookup);
-
-    if (existingUser) {
-      console.log("✅ Updating existing user with PAN:", panNumber);
-      user = await UserInfo.findOneAndUpdate(
-        lookup,
-        {
-          ...cleanFormData,
-          panNumber,
-          ...(phone ? { phone } : {}),
-          sessionId,
-          consentAt: new Date(),
-        },
-        { new: true }
-      );
-
-    } else {
-      console.log("✅ Creating new user with PAN:", panNumber);
-      user = await UserInfo.create({
-        ...cleanFormData,
-        panNumber,
-        ...(phone ? { phone } : {}),
-        sessionId,
-        consentAt: new Date(),
-      });
-    }
+    // ✅ ALWAYS create a new application (allow multiple submissions)
+    // Each submission is a separate application record
+    console.log("✅ Creating new loan application with PAN:", panNumber);
+    const user = await UserInfo.create({
+      ...cleanFormData,
+      panNumber,
+      ...(phone ? { phone } : {}),
+      sessionId,
+      consentAt: new Date(),
+    });
 
     // ✅ Link session to user
     if (sessionId) {
