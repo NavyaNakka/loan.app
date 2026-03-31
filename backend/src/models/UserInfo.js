@@ -54,12 +54,17 @@ const schema = new mongoose.Schema(
     fullName: String,
     phone: {
       type: String,
-      required: true,
-      unique: true,
+      trim: true,
     },
     gender: String,
     pincode: String,
-    panNumber: String, // ✅ Added PAN Number
+    panNumber: {
+      type: String,
+      required: true,
+      // unique: true, // Allow duplicates for testing
+      uppercase: true,
+      trim: true,
+    },
     loanType: String,
     loanAmount: Number,
     yearlyIncome: Number,

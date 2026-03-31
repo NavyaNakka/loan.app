@@ -31,7 +31,7 @@ export default function WhyChooseUs() {
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto">
           <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-slate-900">
-            Why Choose LoanApp?
+            Why Choose KreditKonnect?
           </h2>
           <p className="mt-4 text-base md:text-lg text-slate-600 leading-relaxed">
             Fast, easy, and smart financial solutions tailored for your unique needs.

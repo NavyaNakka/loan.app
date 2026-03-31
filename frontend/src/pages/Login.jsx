@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 
 export default function Login() {
     const [phone, setPhone] = useState("");
@@ -8,6 +9,38 @@ export default function Login() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    // Helper to check if user has an application
+    async function hasExistingApplication(phone) {
+        try {
+            const res = await fetch("https://loan-app-cqlh.onrender.com/api/user/check-application", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ phone }),
+            });
+            const data = await res.json();
+            return data.hasApplication;
+        } catch {
+            return false;
+        }
+    }
+
+    // If already logged in, redirect to /track-application if application exists
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const phone = localStorage.getItem("userPhone");
+        if (token && phone) {
+            hasExistingApplication(phone).then((hasApp) => {
+                if (hasApp) {
+                    navigate("/track-application", { replace: true });
+                } else {
+                    navigate("/apply-loan", { replace: true });
+                }
+            });
+        } else if (token) {
+            navigate("/apply-loan", { replace: true });
+        }
+    }, [navigate]);
 
     const handleSendOtp = async (e) => {
         e.preventDefault();
@@ -62,7 +95,14 @@ export default function Login() {
             if (res.ok) {
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("userId", data._id);
-                navigate("/apply-loan");
+                localStorage.setItem("userPhone", phone);
+                window.dispatchEvent(new Event("storage"));
+                // Check if user has an application and redirect accordingly
+                if (data.hasApplication) {
+                    navigate("/track-application");
+                } else {
+                    navigate("/apply-loan");
+                }
             } else {
                 setError(data.message || "Failed to verify OTP");
             }
@@ -79,6 +119,11 @@ export default function Login() {
                 <div className="text-center mb-8">
                     <h1 className="text-2xl font-bold text-slate-800 mb-2">Welcome Back!</h1>
                     <p className="text-slate-500 text-sm">Sign in to your account</p>
+                    <div className="mt-3 text-xs text-slate-400 bg-slate-100 rounded-lg px-3 py-2 inline-block">
+                        <div><b>Sample for Testing:</b></div>
+                        <div>Mobile: <span className="font-mono">9999999999</span></div>
+                        <div>OTP: <span className="font-mono">1234</span></div>
+                    </div>
                 </div>
 
                 {error && (

@@ -1,83 +1,4 @@
 
-// import { useState } from "react";
-// import { Link, useLocation, useNavigate } from "react-router-dom";
-// import { trackAction } from "../services/track"; // 🔥 added
-
-// export default function Navbar() {
-//   const [isOpen, setIsOpen] = useState(false);
-//   const location = useLocation();
-//   const navigate = useNavigate();
-
-//   const handleScrollToEmi = () => {
-//     trackAction("navbar emi click"); // 🔥 added
-//     setIsOpen(false);
-
-//     if (location.pathname !== "/") {
-//       navigate("/");
-//       setTimeout(() => {
-//         const section = document.getElementById("emi");
-//         if (section) {
-//           section.scrollIntoView({ behavior: "smooth" });
-//         }
-//       }, 100);
-//       return;
-//     }
-
-//     const section = document.getElementById("emi");
-//     if (section) {
-//       section.scrollIntoView({ behavior: "smooth" });
-//     }
-//   };
-
-//   return (
-//     <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
-//       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-
-//         {/* LOGO */}
-//         <Link
-//           to="/"
-//           onClick={() => trackAction("navbar home click")} // 🔥 added
-//           className="text-2xl font-bold tracking-tight text-blue-600"
-//         >
-//           LoanApp
-//         </Link>
-
-//         <div className="hidden items-center gap-8 md:flex">
-
-//           <Link
-//             to="/"
-//             onClick={() => trackAction("navbar home click")} // 🔥 added
-//             className="text-sm font-medium text-slate-700 transition hover:text-blue-600"
-//           >
-//             Home
-//           </Link>
-
-//           <button
-//             type="button"
-//             onClick={handleScrollToEmi}
-//             className="text-sm font-medium text-slate-700 transition hover:text-blue-600"
-//           >
-//             EMI Calculator
-//           </button>
-
-//           <Link
-//             to="/apply-loan"
-//             onClick={() => trackAction("navbar apply loan click")} // 🔥 added
-//             className="text-sm font-medium text-slate-700 transition hover:text-blue-600"
-//           >
-//             Apply Loan
-//           </Link>
-
-//           <a
-//             href="#"
-//             onClick={() => trackAction("navbar track application click")} // 🔥 added
-//             className="text-sm font-medium text-slate-700 transition hover:text-blue-600"
-//           >
-//             Track Application
-//           </a>
-//         </div>
-
-//         {/* DESKTOP APPLY BUTTON */}
 //         <div className="hidden md:block">
 //           <Link
 //             to="/apply-loan"
@@ -104,59 +25,6 @@
 //           <div className="space-y-1 px-4 py-4 sm:px-6">
 
 //             <Link
-//               to="/"
-//               onClick={() => {
-//                 trackAction("navbar home click"); // 🔥 added
-//                 setIsOpen(false);
-//               }}
-//               className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
-//             >
-//               Home
-//             </Link>
-
-//             <button
-//               type="button"
-//               onClick={handleScrollToEmi}
-//               className="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
-//             >
-//               EMI Calculator
-//             </button>
-
-//             <Link
-//               to="/apply-loan"
-//               onClick={() => {
-//                 trackAction("navbar apply loan click"); // 🔥 added
-//                 setIsOpen(false);
-//               }}
-//               className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
-//             >
-//               Apply Loan
-//             </Link>
-
-//             <a
-//               href="#"
-//               onClick={() => trackAction("navbar track application click")} // 🔥 added
-//               className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
-//             >
-//               Track Application
-//             </a>
-
-//             <Link
-//               to="/apply-loan"
-//               onClick={() => {
-//                 trackAction("navbar apply now"); // 🔥 added
-//                 setIsOpen(false);
-//               }}
-//               className="mt-3 block w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-blue-700"
-//             >
-//               Apply Now
-//             </Link> 
-//           </div>
-//         </div>
-//       )}
-//     </nav>
-//   );
-// }
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { trackAction } from "../services/track";
@@ -165,6 +33,7 @@ import { ChevronDown, Menu, X, Landmark, CreditCard, Banknote, Wallet, Coins } f
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [loansDropdownOpen, setLoansDropdownOpen] = useState(false);
+  const [mobileLoanOpen, setMobileLoanOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const location = useLocation();
@@ -219,19 +88,25 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md shadow-sm">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 sm:h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
         {/* LOGO */}
         <Link
           to="/"
           onClick={() => trackAction("navbar home click")}
-          className="flex items-center group outline-none py-1"
+          className="flex items-center gap-2.5 sm:gap-3 group outline-none py-1"
         >
-          <img 
-            src="/logo.png" 
-            alt="Kredit Konnect Logo" 
-            className="h-12 sm:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-sm" 
-          />
+          <span className="flex h-10 w-10 sm:h-11 sm:w-11 lg:h-12 lg:w-12 items-center justify-center rounded-2xl bg-white ring-1 ring-slate-200 shadow-[0_6px_18px_rgba(15,23,42,0.08)] overflow-hidden">
+            <img
+              src="/kk-logo.svg"
+              alt="Kredit Konnect Logo"
+              className="h-full w-full object-contain"
+            />
+          </span>
+          <span className="flex flex-col whitespace-nowrap leading-none">
+            <span className="text-[15px] sm:text-base lg:text-[17px] font-extrabold tracking-[-0.03em] text-slate-900">KreditKonnect</span>
+            <span className="mt-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.22em] text-blue-600">Your Credit Connection</span>
+          </span>
         </Link>
 
         {/* DESKTOP MENU */}
@@ -291,15 +166,8 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* DESKTOP APPLY AND LOGIN BUTTONS */}
+        {/* DESKTOP APPLY BUTTON ONLY */}
         <div className="hidden md:flex items-center gap-4">
-          <Link
-            to="/login"
-            onClick={() => trackAction("navbar login click")}
-            className="text-sm font-semibold text-slate-600 transition hover:text-blue-600"
-          >
-            Log In
-          </Link>
           <Link
             to="/apply-loan"
             onClick={() => trackAction("navbar apply now")}
@@ -313,7 +181,7 @@ export default function Navbar() {
         <button
           type="button"
           className="rounded-xl p-2.5 text-slate-600 md:hidden bg-slate-50 hover:bg-slate-100 transition active:scale-95"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => { if (isOpen) setMobileLoanOpen(false); setIsOpen(!isOpen); }}
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -347,29 +215,35 @@ export default function Navbar() {
               About Us
             </Link>
 
-            <div className="pt-2 pb-1">
-              <p className="px-4 text-xs font-bold tracking-wider text-slate-400 uppercase">Loans</p>
-              <div className="mt-2 space-y-1">
-                {loanOptions.map((loan) => (
-                  <button
-                    key={loan.type}
-                    onClick={() => handleLoanSelect(loan.type)}
-                    className="block w-full rounded-xl px-4 py-3 text-left text-base font-semibold text-slate-600 hover:bg-blue-50 hover:text-blue-700 pl-6"
-                  >
-                    {loan.name}
-                  </button>
-                ))}
-              </div>
+            <div>
+              <button
+                type="button"
+                onClick={() => setMobileLoanOpen((p) => !p)}
+                className="flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-base font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition"
+              >
+                <span>Loans</span>
+                <ChevronDown size={18} className={`transition-transform duration-200 ${mobileLoanOpen ? "rotate-180 text-blue-600" : "text-slate-400"}`} />
+              </button>
+              {mobileLoanOpen && (
+                <div className="ml-4 mt-1 space-y-1 border-l-2 border-blue-100 pl-3">
+                  {loanOptions.map((loan) => {
+                    const Icon = loan.icon;
+                    return (
+                      <button
+                        key={loan.type}
+                        onClick={() => { setMobileLoanOpen(false); handleLoanSelect(loan.type); }}
+                        className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition"
+                      >
+                        <Icon size={16} className="text-blue-500 shrink-0" />
+                        {loan.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col gap-3 mt-6">
-              <Link
-                to="/login"
-                onClick={() => { trackAction("navbar login click"); setIsOpen(false); }}
-                className="block w-full rounded-xl border border-slate-200 px-6 py-4 text-center text-base font-bold text-slate-700 hover:bg-slate-50 transition active:scale-95"
-              >
-                Log In
-              </Link>
               <Link
                 to="/apply-loan"
                 onClick={() => { trackAction("navbar apply now"); setIsOpen(false); }}

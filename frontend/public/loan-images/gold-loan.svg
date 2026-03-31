@@ -1,0 +1,21 @@
+<svg width="520" height="280" viewBox="0 0 520 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="520" y2="280" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF7DA"/>
+      <stop offset="1" stop-color="#FFEFB5"/>
+    </linearGradient>
+  </defs>
+  <rect width="520" height="280" rx="24" fill="url(#bg)"/>
+  <ellipse cx="252" cy="228" rx="176" ry="18" fill="#FBBF24" fill-opacity="0.24"/>
+
+  <rect x="74" y="88" width="172" height="112" rx="16" fill="white" fill-opacity="0.96"/>
+  <circle cx="160" cy="144" r="40" fill="#F59E0B" fill-opacity="0.2"/>
+  <circle cx="160" cy="144" r="24" stroke="#B45309" stroke-width="7"/>
+  <text x="153" y="149" fill="#B45309" font-family="Arial, sans-serif" font-size="16" font-weight="700">₹</text>
+
+  <rect x="294" y="92" width="144" height="108" rx="16" fill="white" fill-opacity="0.95"/>
+  <path d="M320 142H410" stroke="#D97706" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="320" cy="142" r="16" fill="#F59E0B"/>
+  <circle cx="410" cy="142" r="16" fill="#F59E0B"/>
+  <rect x="346" y="120" width="38" height="44" rx="9" fill="#92400E" fill-opacity="0.18"/>
+</svg>

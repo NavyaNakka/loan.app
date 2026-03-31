@@ -286,8 +286,7 @@ const loanLinks = [
 const quickLinks = [
   { label: "EMI Calculator",    to: "/#emi" },
   { label: "Apply for Loan",    to: "/apply-loan" },
-//   { label: "Check Eligibility", to: "/apply-loan" },
-//   { label: "Track Application", to: "/track" },
+  { label: "FAQs",              to: "/#faq" },
  ];
 
 const companyLinks = [
@@ -366,7 +365,7 @@ const socials = [
   },
   {
     label: "Instagram",
-    href: "#",
+    href: "https://instagram.com/kreditkonnect",
     icon: (
       <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
@@ -406,12 +405,13 @@ export default function Footer() {
           <div className="lg:col-span-2">
             {/* Logo */}
             <div className="flex items-center gap-2.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600">
-                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <span className="text-xl font-bold tracking-tight">LoanApp</span>
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white ring-1 ring-white/10 overflow-hidden">
+                <img src="/kk-logo.svg" alt="KreditKonnect" className="h-full w-full object-contain" />
+              </span>
+              <span className="flex flex-col leading-none">
+                <span className="text-[15px] font-extrabold tracking-tight text-white">KreditKonnect</span>
+                <span className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-blue-400">Loan Marketplace</span>
+              </span>
             </div>
 
             <p className="mt-4 text-sm leading-relaxed text-slate-400">
@@ -427,11 +427,11 @@ export default function Footer() {
                 </svg>
                 9966298631(Toll Free)
               </a>
-              <a href="mailto:support@loanapp.in" className="flex items-center gap-2.5 text-sm text-slate-400 transition hover:text-white">
+              <a href="mailto:info@kreditkonnect.com" className="flex items-center gap-2.5 text-sm text-slate-400 transition hover:text-white">
                 <svg className="h-4 w-4 shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5H4.5a2.25 2.25 0 00-2.25 2.25m19.5 0l-9.75 6.75L2.25 6.75" />
                 </svg>
-                info@kerditkonnect.com
+                info@kreditkonnect.com
               </a>
               <p className="flex items-center gap-2.5 text-sm text-slate-400">
                 <svg className="h-4 w-4 shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -469,12 +469,21 @@ export default function Footer() {
                 <ul className="mt-4 space-y-2.5">
                   {items.map((item) => (
                     <li key={item.label}>
-                      <Link
-                        to={item.to}
-                        className="text-sm text-slate-400 transition hover:text-white hover:translate-x-0.5 inline-block"
-                      >
-                        {item.label}
-                      </Link>
+                      {item.to.startsWith("/#") ? (
+                        <a
+                          href={item.to}
+                          className="text-sm text-slate-400 transition hover:text-white hover:translate-x-0.5 inline-block"
+                        >
+                          {item.label}
+                        </a>
+                      ) : (
+                        <Link
+                          to={item.to}
+                          className="text-sm text-slate-400 transition hover:text-white hover:translate-x-0.5 inline-block"
+                        >
+                          {item.label}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -487,7 +496,7 @@ export default function Footer() {
         <div className="mt-12 rounded-2xl border border-white/10 bg-white/5 px-6 py-5">
           <p className="mb-1.5 text-xs font-semibold uppercase tracking-widest text-slate-400">Disclaimer</p>
           <p className="text-xs leading-relaxed text-slate-500">
-            LoanApp is a loan facilitation platform and not a direct lender. All loan products are offered
+            KreditKonnect is a loan facilitation platform and not a direct lender. All loan products are offered
             by RBI-registered NBFCs and banking partners. Loan approval is subject to credit assessment,
             KYC verification, and lender discretion. Interest rates, charges, and terms may vary based on
             your credit profile and the lending partner assigned to your application. Please read all
@@ -501,7 +510,7 @@ export default function Footer() {
         <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-xs text-slate-500">
-              © {new Date().getFullYear()} LoanApp Technologies Pvt. Ltd. All rights reserved.
+              © {new Date().getFullYear()} KreditKonnect Technologies Pvt. Ltd. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               {legalLinks.slice(0, 3).map((item) => (

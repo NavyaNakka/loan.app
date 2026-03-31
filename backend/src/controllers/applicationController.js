@@ -63,7 +63,8 @@ import UserStatusHistory from "../models/UserStatusHistory.js";
 export const applyLoan = async (req, res) => {
   try {
     const { sessionId, ...formData } = req.body;
-    const phone = String(formData.phone);
+    const panNumber = String(formData.panNumber || "").toUpperCase().trim();
+    const phone = String(formData.phone || "").trim();
 
     // ✅ Consent validation
     if (!formData.acceptedTerms) {
@@ -72,17 +73,25 @@ export const applyLoan = async (req, res) => {
       });
     }
 
-    let user;
+    if (!panNumber) {
+      return res.status(400).json({
+        message: "PAN number is required",
+      });
+    }
 
-    const existingUser = await UserInfo.findOne({ phone });
+    let user;
+    const lookup = { panNumber };
+
+    const existingUser = await UserInfo.findOne(lookup);
 
     if (existingUser) {
       // ✅ UPDATE existing user (IMPORTANT FIX)
       user = await UserInfo.findOneAndUpdate(
-        { phone },
+        lookup,
         {
           ...formData,                 // ✅ includes acceptedTerms
-          phone,
+          panNumber,
+          ...(phone ? { phone } : {}),
           sessionId,
           consentAt: new Date(),       // ✅ update timestamp
         },
@@ -93,7 +102,8 @@ export const applyLoan = async (req, res) => {
       // ✅ Create new user
       user = await UserInfo.create({
         ...formData,
-        phone,
+        panNumber,
+        ...(phone ? { phone } : {}),
         sessionId,
         consentAt: new Date(),         // ✅ add timestamp
       });

@@ -1,4 +1,3 @@
-
 // import Navbar from "./components/Navbar";
 // import Hero from "./components/Hero";
 // import ProductsSection from "./components/ProductsSection";
@@ -28,14 +27,7 @@
 
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import ProductsSection from "./components/ProductsSection";
-import Features from "./components/Features";
-import EmiCalculator from "./components/EmiCalculator";
-import HowItWorks from "./components/HowItWorks";
-import WhyChooseUs from "./components/WhyChooseUs";
-import Footer from "./components/Footer";
-import Faq from "./components/Faq"
+import InspiredHome from "./components/InspiredHome";
 
 import ApplyLoan from "./pages/ApplyLoan";
 import Terms from "./pages/Terms";
@@ -43,20 +35,11 @@ import Privacy from "./pages/Privacy";
 import AboutUs from "./pages/AboutUs";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Contact from "./pages/Contact";
+import TrackApplication from "./pages/TrackApplication";
 
 function HomePage() {
-  return (
-    <>
-      <Hero />
-      <ProductsSection />
-      <Features />
-      <EmiCalculator />
-      <HowItWorks />
-      <WhyChooseUs />
-      <Faq />
-      <Footer />
-    </>
-  );
+  return <InspiredHome />;
 }
 
 function App() {
@@ -72,6 +55,8 @@ function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/track-application" element={<TrackApplication />} />
         </Routes>
       </div>
     </div>

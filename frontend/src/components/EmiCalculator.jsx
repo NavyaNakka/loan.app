@@ -442,43 +442,6 @@ function formatCurrency(value) {
   }).format(value || 0);
 }
 
-function formatShort(value) {
-  if (value >= 10000000) return `₹${(value / 10000000).toFixed(2)} Cr`;
-  if (value >= 100000) return `₹${(value / 100000).toFixed(2)} L`;
-  if (value >= 1000) return `₹${(value / 1000).toFixed(1)} K`;
-  return `₹${Math.round(value)}`;
-}
-
-// ── Donut SVG Chart ──────────────────────────────────────────────────────────
-function DonutChart({ principalShare, interestShare }) {
-  const size = 148;
-  const strokeWidth = 16;
-  const r = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * r;
-  const principalDash = (principalShare / 100) * circumference;
-  const interestDash = (interestShare / 100) * circumference;
-
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#f1f5f9" strokeWidth={strokeWidth} />
-      <circle
-        cx={size / 2} cy={size / 2} r={r} fill="none"
-        stroke="#f97316" strokeWidth={strokeWidth}
-        strokeDasharray={`${interestDash} ${circumference - interestDash}`}
-        strokeDashoffset={0} strokeLinecap="butt"
-        style={{ transition: "stroke-dasharray 0.5s ease" }}
-      />
-      <circle
-        cx={size / 2} cy={size / 2} r={r} fill="none"
-        stroke="#2563eb" strokeWidth={strokeWidth}
-        strokeDasharray={`${principalDash} ${circumference - principalDash}`}
-        strokeDashoffset={-interestDash} strokeLinecap="butt"
-        style={{ transition: "stroke-dasharray 0.5s ease" }}
-      />
-    </svg>
-  );
-}
-
 export default function EmiCalculator() {
   const navigate = useNavigate();
 
@@ -507,54 +470,31 @@ export default function EmiCalculator() {
     return { emi, totalPayment, totalInterest, interestShare, principalShare };
   }, [loanAmount, annualRate, tenureMonths]);
 
-  // First 6 months amortization
-  const schedule = useMemo(() => {
-    const principal = Number(loanAmount) || 0;
-    const rate = Number(annualRate) || 0;
-    const months = Number(tenureMonths) || 0;
-    if (!principal || !rate || !months) return [];
-
-    const monthlyRate = rate / 12 / 100;
-    const emi =
-      (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
-      (Math.pow(1 + monthlyRate, months) - 1);
-
-    let balance = principal;
-    const rows = [];
-    for (let i = 1; i <= Math.min(6, months); i++) {
-      const interest = balance * monthlyRate;
-      const principalPaid = emi - interest;
-      balance -= principalPaid;
-      rows.push({ month: i, emi, principal: principalPaid, interest, balance: Math.max(0, balance) });
-    }
-    return rows;
-  }, [loanAmount, annualRate, tenureMonths]);
-
   return (
-    <section id="emi" className="bg-slate-50 py-16 sm:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="emi" className="bg-slate-50 py-10 sm:py-12">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-700">
+        <div className="mx-auto max-w-xl text-center">
+          <span className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
             EMI Calculator
           </span>
-          <h2 className="mt-4 text-3xl font-bold text-slate-900">Plan Your Loan Repayment</h2>
-          <p className="mt-4 text-lg text-slate-600">
-            Estimate your monthly EMI and understand the repayment breakdown before submitting your application.
+          <h2 className="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">Quick EMI Estimate</h2>
+          <p className="mt-2 text-sm text-slate-600 sm:text-base">
+            Clean and simple EMI preview before you apply.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-2">
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
 
           {/* ── LEFT: Inputs ── */}
-          <div className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
-            <h3 className="text-xl font-semibold text-slate-900">Loan Details</h3>
+          <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+            <h3 className="text-base font-semibold text-slate-900">Loan Details</h3>
 
-            <div className="mt-8 space-y-8">
+            <div className="mt-5 space-y-5">
               {/* Loan Amount */}
               <div>
-                <div className="mb-3 flex items-center justify-between">
+                <div className="mb-2 flex items-center justify-between">
                   <label className="text-sm font-medium text-slate-700">Loan Amount</label>
                   <span className="text-sm font-semibold text-blue-600">{formatCurrency(loanAmount)}</span>
                 </div>
@@ -565,12 +505,12 @@ export default function EmiCalculator() {
                     const val = e.target.value.replace(/[^0-9]/g, '');
                     setLoanAmount(val ? Number(val) : '');
                   }}
-                  className="mt-3 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
+                  className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
               </div>
 
               {/* Interest Rate */}
               <div>
-                <div className="mb-3 flex items-center justify-between">
+                <div className="mb-2 flex items-center justify-between">
                   <label className="text-sm font-medium text-slate-700">Interest Rate</label>
                   <span className="text-sm font-semibold text-blue-600">{annualRate}% p.a.</span>
                 </div>
@@ -582,12 +522,12 @@ export default function EmiCalculator() {
                     if ((val.match(/\./g) || []).length > 1) val = val.replace(/\.+$/, '');
                     setAnnualRate(val);
                   }}
-                  className="mt-3 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
+                  className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
               </div>
 
               {/* Tenure */}
               <div>
-                <div className="mb-3 flex items-center justify-between">
+                <div className="mb-2 flex items-center justify-between">
                   <label className="text-sm font-medium text-slate-700">Tenure</label>
                   <span className="text-sm font-semibold text-blue-600">{tenureMonths} months</span>
                 </div>
@@ -598,127 +538,52 @@ export default function EmiCalculator() {
                     const val = e.target.value.replace(/[^0-9]/g, '');
                     setTenureMonths(val ? Number(val) : '');
                   }}
-                  className="mt-3 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
+                  className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
               </div>
             </div>
           </div>
 
-          {/* ── RIGHT: Results (single card, matching left height) ── */}
-          <div className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 flex flex-col gap-6">
+          {/* ── RIGHT: Compact Results ── */}
+          <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 flex flex-col gap-4">
 
-            {/* 1. EMI Hero */}
-            <div className="rounded-2xl bg-blue-600 p-6 text-white">
-              <p className="text-sm font-medium text-blue-200">Estimated Monthly EMI</p>
-              <h3 className="mt-1.5 text-4xl font-bold tracking-tight">{formatCurrency(analytics.emi)}</h3>
-              <p className="mt-1.5 text-sm text-blue-200">Per month for {tenureMonths} months</p>
+            <div className="rounded-xl bg-blue-600 p-4 text-white">
+              <p className="text-xs font-medium text-blue-200">Estimated Monthly EMI</p>
+              <h3 className="mt-1 text-3xl font-bold tracking-tight">{formatCurrency(analytics.emi)}</h3>
+              <p className="mt-1 text-xs text-blue-200">For {tenureMonths} months</p>
             </div>
 
-            {/* 2. Four Info Tiles */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {[
                 { label: "Principal Amount", value: formatCurrency(loanAmount), accent: false },
                 { label: "Total Interest", value: formatCurrency(analytics.totalInterest), accent: true },
                 { label: "Total Payment", value: formatCurrency(analytics.totalPayment), accent: false },
                 { label: "Tenure", value: `${tenureMonths} Months`, accent: false },
               ].map((tile) => (
-                <div key={tile.label} className="rounded-2xl bg-slate-50 px-4 py-4">
+                <div key={tile.label} className="rounded-lg bg-slate-50 px-3 py-3">
                   <p className="text-xs text-slate-500">{tile.label}</p>
-                  <p className={`mt-1.5 text-lg font-semibold ${tile.accent ? "text-orange-500" : "text-slate-900"}`}>
+                  <p className={`mt-1 text-sm font-semibold ${tile.accent ? "text-orange-500" : "text-slate-900"}`}>
                     {tile.value}
                   </p>
                 </div>
               ))}
             </div>
 
-            {/* 3. Repayment Analytics */}
             <div>
-              <div className="mb-3 flex items-center justify-between text-sm font-medium text-slate-700">
-                <span>Repayment Analytics</span>
-                <span className="text-xs text-slate-400">
-                  Principal {analytics.principalShare.toFixed(1)}% / Interest {analytics.interestShare.toFixed(1)}%
-                </span>
+              <div className="mb-1.5 flex items-center justify-between text-xs font-medium text-slate-600">
+                <span>Principal vs Interest</span>
+                <span>{analytics.principalShare.toFixed(1)}% / {analytics.interestShare.toFixed(1)}%</span>
               </div>
-
-              {/* Segmented bar */}
-              <div className="flex h-3 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
                 <div className="h-full bg-blue-600 transition-all duration-500"
                   style={{ width: `${analytics.principalShare || 0}%` }} />
                 <div className="h-full bg-orange-400 transition-all duration-500"
                   style={{ width: `${analytics.interestShare || 0}%` }} />
               </div>
-
-              {/* Donut + share rows */}
-              <div className="mt-6 flex flex-col md:flex-row items-center gap-6 md:gap-8">
-                <div className="relative shrink-0">
-                  <DonutChart principalShare={analytics.principalShare} interestShare={analytics.interestShare} />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">Split</span>
-                  </div>
-                </div>
-
-                <div className="flex-1 w-full space-y-3">
-                  <div className="flex items-center justify-between rounded-xl bg-slate-50/80 px-4 py-3 ring-1 ring-slate-100">
-                    <span className="flex items-center gap-3 text-sm font-medium text-slate-600">
-                      <span className="inline-block h-3 w-3 rounded-full bg-blue-600 shadow-sm shadow-blue-500/50" />
-                      Principal
-                    </span>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-slate-900">{analytics.principalShare.toFixed(1)}%</p>
-                      <p className="text-xs font-semibold text-slate-400">{formatShort(loanAmount)}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-xl bg-slate-50/80 px-4 py-3 ring-1 ring-slate-100">
-                    <span className="flex items-center gap-3 text-sm font-medium text-slate-600">
-                      <span className="inline-block h-3 w-3 rounded-full bg-orange-400 shadow-sm shadow-orange-400/50" />
-                      Interest
-                    </span>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-slate-900">{analytics.interestShare.toFixed(1)}%</p>
-                      <p className="text-xs font-semibold text-slate-400">{formatShort(analytics.totalInterest)}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
 
-            {/* 4. Repayment Schedule */}
-            <div>
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-medium text-slate-700">Repayment Schedule</span>
-                <span className="text-xs text-slate-400">First 6 months</span>
-              </div>
-              <div className="overflow-x-auto rounded-2xl ring-1 ring-slate-100">
-                <table className="w-full text-sm">
-                  <thead className="bg-slate-50">
-                    <tr>
-                      <th className="px-3 py-2.5 text-left text-xs font-medium text-slate-400">Mo.</th>
-                      <th className="px-3 py-2.5 text-right text-xs font-medium text-slate-400">EMI</th>
-                      <th className="px-3 py-2.5 text-right text-xs font-medium text-blue-500">Principal</th>
-                      <th className="px-3 py-2.5 text-right text-xs font-medium text-orange-400">Interest</th>
-                      <th className="px-3 py-2.5 text-right text-xs font-medium text-slate-400">Balance</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {schedule.map((row, idx) => (
-                      <tr key={row.month}
-                        className={`border-t border-slate-50 transition-colors hover:bg-blue-50/40 ${idx % 2 === 0 ? "bg-white" : "bg-slate-50/40"}`}>
-                        <td className="px-3 py-2.5 text-slate-500">{row.month}</td>
-                        <td className="px-3 py-2.5 text-right font-medium text-slate-700">{formatShort(row.emi)}</td>
-                        <td className="px-3 py-2.5 text-right font-medium text-blue-600">{formatShort(row.principal)}</td>
-                        <td className="px-3 py-2.5 text-right font-medium text-orange-400">{formatShort(row.interest)}</td>
-                        <td className="px-3 py-2.5 text-right text-slate-500">{formatShort(row.balance)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* 5. CTA */}
             <button
               onClick={() => { trackAction("apply from emi"); navigate("/apply-loan"); }}
-              className="mt-auto w-full rounded-xl bg-slate-900 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 active:scale-95"
+              className="mt-1 w-full rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 active:scale-95"
             >
               Apply Based on This EMI →
             </button>

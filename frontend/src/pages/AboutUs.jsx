@@ -5,8 +5,6 @@ import Footer from "../components/Footer";
 export default function AboutUs() {
     const stats = [
         { label: "Active Users", value: "2.5M+" },
-        { label: "Loan Disbursed", value: "₹10K Cr+" },
-        { label: "Lending Partners", value: "85+" },
         { label: "Cities Covered", value: "400+" },
     ];
 
@@ -52,7 +50,7 @@ export default function AboutUs() {
                             <span className="text-blue-200">Empowering Lives</span>
                         </h1>
                         <p className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-blue-100 sm:text-xl">
-                            At LoanApp, we believe that access to credit should be simple, transparent, and fast. We are building the future of digitized lending to bring financial freedom to everyone.
+                            At KreditKonnect, we believe that access to credit should be simple, transparent, and fast. We are building the future of digitized lending to bring financial freedom to everyone.
                         </p>
                     </motion.div>
                 </div>
