@@ -25,7 +25,7 @@
 // export default App;
 
 
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import InspiredHome from "./components/InspiredHome";
@@ -49,6 +49,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // ✅ Check authentication on app mount
   useEffect(() => {
@@ -69,6 +70,42 @@ function App() {
     };
 
     checkAuth();
+  }, []);
+
+  // ✅ Re-check auth when location changes (after login redirect)
+  useEffect(() => {
+    const token = authService.getToken();
+    const userData = authService.getUserData();
+
+    if (token && userData) {
+      setIsAuthenticated(true);
+      setUser(userData);
+    } else {
+      setIsAuthenticated(false);
+      setUser(null);
+    }
+  }, [location]);
+
+  // ✅ Listen for localStorage changes from same tab/window
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const token = authService.getToken();
+      const userData = authService.getUserData();
+
+      if (token && userData) {
+        setIsAuthenticated(true);
+        setUser(userData);
+        console.log("✅ Auth detected from localStorage update");
+      } else {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
+    };
+
+    // Listen for storage changes (from same window)
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   // ✅ Handle logout
