@@ -29,6 +29,7 @@ export default function Login() {
 
         setLoading(true);
         try {
+            console.log("📤 Sending OTP to:", API_BASE, "/api/auth/send-otp");
             const res = await fetch(`${API_BASE}/api/auth/send-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -42,7 +43,8 @@ export default function Login() {
                 setError(data.message || "Failed to send OTP");
             }
         } catch (err) {
-            setError("An error occurred. Please try again.");
+            console.error("❌ OTP Send Error:", err);
+            setError(`Error: ${err.message || "Connection failed. Check API URL."}`);
         } finally {
             setLoading(false);
         }
@@ -59,6 +61,7 @@ export default function Login() {
 
         setLoading(true);
         try {
+            console.log("📤 Verifying OTP to:", API_BASE, "/api/auth/verify-otp");
             const res = await fetch(`${API_BASE}/api/auth/verify-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -73,7 +76,8 @@ export default function Login() {
                 setError(data.message || "Failed to verify OTP");
             }
         } catch (err) {
-            setError("An error occurred. Please try again.");
+            console.error("❌ OTP Verify Error:", err);
+            setError(`Error: ${err.message || "Connection failed. Check API URL."}`);
         } finally {
             setLoading(false);
         }
