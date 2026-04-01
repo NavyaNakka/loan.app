@@ -109,27 +109,22 @@ export const applyLoan = async (req, res) => {
     const panNumber = String(formData.panNumber || "").toUpperCase().trim();
     const phone = String(formData.phone || "").trim();
 
-    console.log("📝 Apply Loan Request received:", { panNumber, phone, formData });
-
     // ✅ Consent validation
     if (!formData.acceptedTerms) {
-      console.warn("⚠️ Missing acceptedTerms");
       return res.status(400).json({
         message: "Please accept terms and conditions",
       });
     }
 
-    if (!panNumber) {
-      console.warn("⚠️ Missing PAN number");
+    // ✅ PAN required and valid
+    if (!panNumber || panNumber.length === 0) {
       return res.status(400).json({
         message: "PAN number is required",
       });
     }
 
-    // ✅ PAN Validation with checksum
     if (!validatePAN(panNumber)) {
       const panError = getPANError(panNumber);
-      console.warn(`⚠️ Invalid PAN: ${panError}`);
       return res.status(400).json({
         message: panError || "Invalid PAN number",
       });
@@ -139,7 +134,6 @@ export const applyLoan = async (req, res) => {
     const requiredFields = ["fullName", "gender", "pincode", "loanType", "loanAmount", "employmentType", "yearlyIncome"];
     for (const field of requiredFields) {
       if (!formData[field]) {
-        console.warn(`⚠️ Missing required field: ${field}`);
         return res.status(400).json({
           message: `${field} is required`,
         });
@@ -153,9 +147,7 @@ export const applyLoan = async (req, res) => {
       yearlyIncome: parseInt(formData.yearlyIncome) || 0,
     };
 
-    // ✅ ALWAYS create a new application (allow multiple submissions)
-    // Each submission is a separate application record
-    console.log("✅ Creating new loan application with PAN:", panNumber);
+    // Create new application
     const user = await UserInfo.create({
       ...cleanFormData,
       panNumber,
@@ -164,15 +156,13 @@ export const applyLoan = async (req, res) => {
       consentAt: new Date(),
     });
 
-    // ✅ Link session to user
+    // Link session to user
     if (sessionId) {
       await UserStatusHistory.updateMany(
         { sessionId },
         { userId: user._id }
       );
     }
-
-    console.log("✅ Application submitted successfully for user:", user._id);
 
     res.json({
       success: true,
@@ -181,11 +171,7 @@ export const applyLoan = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("❌ ERROR in applyLoan:", {
-      message: err.message,
-      stack: err.stack,
-      name: err.name,
-    });
+    console.error("❌ ERROR in applyLoan:", err.message);
     res.status(500).json({ 
       error: err.message,
       details: process.env.NODE_ENV === "development" ? err.stack : undefined,

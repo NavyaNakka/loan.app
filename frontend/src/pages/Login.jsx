@@ -1,43 +1,18 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import authService from "../services/auth";
+import { Phone, Lock, CheckCircle2 } from "lucide-react";
 
 export default function Login() {
     const [phone, setPhone] = useState("");
     const [otp, setOtp] = useState("");
-    const [step, setStep] = useState(1); // 1 = Phone, 2 = OTP
+    const [step, setStep] = useState(1);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Helper to check if user has an application
-    async function hasExistingApplication(phone) {
-        try {
-            const res = await fetch("https://loan-app-cqlh.onrender.com/api/user/check-application", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ phone }),
-            });
-            const data = await res.json();
-            return data.hasApplication;
-        } catch {
-            return false;
-        }
-    }
-
-    // If already logged in, redirect to /track-application if application exists
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        const phone = localStorage.getItem("userPhone");
-        if (token && phone) {
-            hasExistingApplication(phone).then((hasApp) => {
-                if (hasApp) {
-                    navigate("/track-application", { replace: true });
-                } else {
-                    navigate("/apply-loan", { replace: true });
-                }
-            });
-        } else if (token) {
+        if (authService.isAuthenticated()) {
             navigate("/apply-loan", { replace: true });
         }
     }, [navigate]);
@@ -47,12 +22,11 @@ export default function Login() {
         setError("");
         
         if (!phone || phone.length < 10) {
-            setError("Please enter a valid phone number");
+            setError("Please enter a valid 10-digit mobile number");
             return;
         }
 
         setLoading(true);
-
         try {
             const res = await fetch("http://localhost:5000/api/auth/send-otp", {
                 method: "POST",
@@ -78,12 +52,11 @@ export default function Login() {
         setError("");
         
         if (!otp || otp.length < 4) {
-            setError("Please enter a valid OTP");
+            setError("Please enter valid 4-digit OTP");
             return;
         }
 
         setLoading(true);
-
         try {
             const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
                 method: "POST",
@@ -93,16 +66,8 @@ export default function Login() {
 
             const data = await res.json();
             if (res.ok) {
-                localStorage.setItem("token", data.token);
-                localStorage.setItem("userId", data._id);
-                localStorage.setItem("userPhone", phone);
-                window.dispatchEvent(new Event("storage"));
-                // Check if user has an application and redirect accordingly
-                if (data.hasApplication) {
-                    navigate("/track-application");
-                } else {
-                    navigate("/apply-loan");
-                }
+                authService.saveAuth(data.token, { _id: data._id, phone: phone });
+                navigate("/apply-loan", { replace: true });
             } else {
                 setError(data.message || "Failed to verify OTP");
             }
@@ -114,92 +79,106 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center p-4">
-            <div className="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl relative">
-                <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-slate-800 mb-2">Welcome Back!</h1>
-                    <p className="text-slate-500 text-sm">Sign in to your account</p>
-                    <div className="mt-3 text-xs text-slate-400 bg-slate-100 rounded-lg px-3 py-2 inline-block">
-                        <div><b>Sample for Testing:</b></div>
-                        <div>Mobile: <span className="font-mono">9999999999</span></div>
-                        <div>OTP: <span className="font-mono">1234</span></div>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 flex items-center justify-center px-4 py-12">
+            <div className="w-full max-w-md">
+                {/* Logo/Header */}
+                <div className="text-center mb-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 shadow-lg">
+                        <Lock className="w-8 h-8 text-white" />
                     </div>
+                    <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h1>
+                    <p className="text-slate-600">Sign in to your KreditKonnect account</p>
                 </div>
 
-                {error && (
-                    <div className="bg-red-50 text-red-500 p-3 rounded-xl mb-4 text-sm text-center">
-                        {error}
-                    </div>
-                )}
-
-                {step === 1 ? (
-                    <form onSubmit={handleSendOtp} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                                Phone Number
-                            </label>
-                            <input
-                                type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                                placeholder="Enter your mobile number"
-                                required
-                                maxLength={15}
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all placeholder:text-slate-400"
-                            />
+                {/* Main Card */}
+                <div className="bg-white rounded-2xl shadow-xl shadow-blue-900/10 ring-1 ring-blue-100/50 p-8 sm:p-10">
+                    {error && (
+                        <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200">
+                            <p className="text-sm font-medium text-red-800">{error}</p>
                         </div>
+                    )}
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full py-3.5 mt-4 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold shadow-lg shadow-blue-500/30 transition-all disabled:opacity-70"
-                        >
-                            {loading ? "Sending OTP..." : "Get OTP"}
-                        </button>
-                    </form>
-                ) : (
-                    <form onSubmit={handleVerifyOtp} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                                Enter OTP <span className="text-xs text-slate-400 font-normal ml-2">(Use 1234 for testing)</span>
-                            </label>
-                            <input
-                                type="text"
-                                value={otp}
-                                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                                placeholder="Enter 4-digit OTP"
-                                required
-                                maxLength={4}
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all placeholder:text-slate-400 text-center tracking-widest text-lg font-semibold"
-                            />
-                        </div>
+                    {step === 1 ? (
+                        <form onSubmit={handleSendOtp} className="space-y-6">
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-900 mb-3">
+                                    Mobile Number
+                                </label>
+                                <div className="flex gap-3">
+                                    <div className="flex items-center px-4 rounded-xl border border-slate-300 bg-slate-50">
+                                        <span className="text-sm font-semibold text-slate-600">+91</span>
+                                    </div>
+                                    <input
+                                        type="tel"
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                                        placeholder="10-digit number"
+                                        inputMode="numeric"
+                                        maxLength={10}
+                                        className="flex-1 px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white placeholder:text-slate-400"
+                                    />
+                                </div>
+                                {phone && !/^\d{10}$/.test(phone) && (
+                                    <p className="mt-2 text-xs text-amber-600 font-medium">Enter 10 digits</p>
+                                )}
+                            </div>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full py-3.5 mt-4 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold shadow-lg shadow-blue-500/30 transition-all disabled:opacity-70"
-                        >
-                            {loading ? "Verifying..." : "Verify & Log In"}
-                        </button>
+                            <button
+                                type="submit"
+                                disabled={loading || phone.length !== 10}
+                                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg shadow-blue-600/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                            >
+                                {loading ? "Sending OTP..." : "Send OTP"}
+                            </button>
 
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setStep(1);
-                                setOtp("");
-                            }}
-                            className="w-full py-2 mt-2 text-slate-500 hover:text-slate-700 text-sm transition-all"
-                        >
-                            Change phone number
-                        </button>
-                    </form>
-                )}
+                            <p className="text-center text-xs text-slate-500 pt-4">
+                                Test credentials: Phone: <span className="font-mono font-bold text-slate-700">9999999999</span> | OTP: <span className="font-mono font-bold text-slate-700">1234</span>
+                            </p>
+                        </form>
+                    ) : (
+                        <form onSubmit={handleVerifyOtp} className="space-y-6">
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-900 mb-3">
+                                    Enter OTP
+                                </label>
+                                <p className="text-xs text-slate-600 mb-3">We've sent a 4-digit code to +91 {phone}</p>
+                                <input
+                                    type="text"
+                                    value={otp}
+                                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                                    placeholder="0000"
+                                    inputMode="numeric"
+                                    maxLength={4}
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-center text-2xl tracking-widest font-semibold bg-white placeholder:text-slate-300"
+                                />
+                            </div>
 
-                <p className="mt-8 text-center text-sm text-slate-500">
-                    Don't have an account?{" "}
-                    <Link to="/signup" className="text-blue-600 font-medium hover:underline">
-                        Register
-                    </Link>
+                            <button
+                                type="submit"
+                                disabled={loading || otp.length !== 4}
+                                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg shadow-blue-600/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                            >
+                                {loading ? "Verifying..." : "Verify & Login"}
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setStep(1);
+                                    setOtp("");
+                                    setError("");
+                                }}
+                                className="w-full py-2 text-slate-600 hover:text-slate-900 text-sm font-medium transition-all"
+                            >
+                                Use different number
+                            </button>
+                        </form>
+                    )}
+                </div>
+
+                {/* Footer */}
+                <p className="text-center text-xs text-slate-600 mt-8">
+                    By signing in, you agree to our <a href="/terms" className="text-blue-600 hover:underline font-medium">Terms</a> and <a href="/privacy" className="text-blue-600 hover:underline font-medium">Privacy Policy</a>
                 </p>
             </div>
         </div>

@@ -29,13 +29,13 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import InspiredHome from "./components/InspiredHome";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import ApplyLoan from "./pages/ApplyLoan";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import AboutUs from "./pages/AboutUs";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 import Contact from "./pages/Contact";
 import TrackApplication from "./pages/TrackApplication";
 import authService from "./services/auth";
@@ -102,12 +102,11 @@ function App() {
       <div className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/apply-loan" element={<ApplyLoan />} />
+          <Route path="/apply-loan" element={<ProtectedRoute element={<ApplyLoan />} />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/track-application" element={<TrackApplication />} />
         </Routes>

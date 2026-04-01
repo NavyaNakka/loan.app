@@ -89,14 +89,34 @@ export default function ApplyLoan() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // ✅ Auto-skip OTP if already authenticated and load saved form data
   useEffect(() => {
-    if (typeParam) {
-      setFormData((prev) => ({
+    const user = authService.getUserData();
+    const savedFormData = authService.getFormData();
+
+    // Skip OTP if user is authenticated
+    if (user?.phone) {
+      setVerifiedPhone(user.phone);
+      setStep("personal");
+    }
+
+    // Load saved form data with defaults
+    if (savedFormData) {
+      // Ensure all fields exist by merging with defaults
+      setFormData(prev => ({
+        ...initialDetails,
+        ...savedFormData,
+        // Keep URL param loan type if provided
+        loanType: typeParam ? typeParam.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase()) : savedFormData.loanType || "Personal Loan",
+      }));
+    } else if (typeParam) {
+      // Just set loan type from URL if no saved data
+      setFormData(prev => ({
         ...prev,
         loanType: typeParam.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase()),
       }));
     }
-  }, [typeParam]);
+  }, []);
 
   // ── OTP Handlers ─────────────────────────────────────────────────────────────
   const handleSendOtp = async () => {
@@ -175,16 +195,15 @@ export default function ApplyLoan() {
       const submitData = {
         ...formData,
         phone: verifiedPhone,
-        panNumber: formData.panNumber.toUpperCase(),
+        panNumber: formData.panNumber.toUpperCase().trim(),
         acceptedTerms: true,
         sessionId,
       };
       
-      console.log("🔍 Submitting application with data:", submitData);
-      console.log("🔍 API_BASE:", API_BASE);
-      
       const response = await axios.post(`${API_BASE}/api/apply`, submitData);
-      console.log("✅ Success response:", response);
+      
+      // Save form data for future use
+      authService.saveFormData(formData);
       
       alert("✅ Application submitted successfully!");
       setFormData(initialDetails);
@@ -342,7 +361,7 @@ export default function ApplyLoan() {
               type="button"
               onClick={otpSent ? handleVerifyOtp : handleSendOtp}
               disabled={otpLoading}
-              className="mt-5 w-full rounded-2xl bg-blue-600 py-3 text-sm font-bold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-700 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="mt-6 w-full px-6 py-3 rounded-lg bg-blue-600 text-white font-bold shadow-md shadow-blue-600/20 transition hover:bg-blue-700 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {otpLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -388,14 +407,14 @@ export default function ApplyLoan() {
           <div className="rounded-2xl bg-white p-5 sm:rounded-3xl sm:p-8 shadow-xl shadow-blue-900/5 ring-1 ring-slate-100">
             <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">Full Name <span className="text-red-500">*</span></label>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Full Name <span className="text-red-500">*</span></label>
                 <input name="fullName" value={formData.fullName} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. Rahul Sharma" className={inputClass("fullName")} />
                 <FieldError name="fullName" />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">Gender <span className="text-red-500">*</span></label>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Gender <span className="text-red-500">*</span></label>
                 <select name="gender" value={formData.gender} onChange={handleChange} onBlur={handleBlur} className={inputClass("gender")}>
-                  <option value="">Select gender</option>
+                  <option value="">Select</option>
                   <option>Male</option>
                   <option>Female</option>
                   <option>Other</option>
@@ -403,29 +422,29 @@ export default function ApplyLoan() {
                 <FieldError name="gender" />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">Pincode <span className="text-red-500">*</span></label>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Pincode <span className="text-red-500">*</span></label>
                 <input name="pincode" value={formData.pincode} onChange={handleChange} onBlur={handleBlur} placeholder="6-digit pincode" maxLength={6} inputMode="numeric" className={inputClass("pincode")} />
                 <FieldError name="pincode" />
               </div>
               <div className="sm:col-span-2">
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">PAN Number <span className="text-red-500">*</span></label>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">PAN Number <span className="text-red-500">*</span></label>
                 <input name="panNumber" value={formData.panNumber} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. ABCDE1234F" maxLength={10} className={`${inputClass("panNumber")} uppercase`} />
                 <FieldError name="panNumber" />
               </div>
             </div>
 
-            <div className="mt-5 flex flex-col sm:flex-row gap-3">
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <button
                 type="button"
                 onClick={() => { setStep("otp"); setOtp(""); setOtpSent(false); }}
-                className="rounded-2xl border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 active:scale-[0.98]"
+                className="px-6 py-3 rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-400 active:scale-95"
               >
                 ← Back to OTP
               </button>
               <button
                 type="button"
                 onClick={handlePersonalContinue}
-                className="flex-1 rounded-2xl bg-blue-600 py-3 text-sm sm:text-base text-white font-bold tracking-wide shadow-lg shadow-blue-600/30 transition-all hover:bg-blue-700 active:scale-[0.98]"
+                className="flex-1 px-6 py-3 rounded-lg bg-blue-600 text-sm sm:text-base text-white font-bold shadow-md shadow-blue-600/20 transition hover:bg-blue-700 active:scale-95"
               >
                 Continue to Employment Details →
               </button>
@@ -455,9 +474,9 @@ export default function ApplyLoan() {
           <form onSubmit={handleSubmit} noValidate className="space-y-7">
             <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">Loan Type <span className="text-red-500">*</span></label>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Loan Type <span className="text-red-500">*</span></label>
                 <select name="loanType" value={formData.loanType} onChange={handleChange} onBlur={handleBlur} className={inputClass("loanType")}>
-                  <option value="">Select loan type</option>
+                  <option value="">Select</option>
                   <option>Personal Loan</option>
                   <option>Business Loan</option>
                   <option>Gold Loan</option>
@@ -466,21 +485,21 @@ export default function ApplyLoan() {
                 <FieldError name="loanType" />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">Required Loan Amount (INR) <span className="text-red-500">*</span></label>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Loan Amount (INR) <span className="text-red-500">*</span></label>
                 <input name="loanAmount" value={formData.loanAmount} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. 500000" inputMode="numeric" className={inputClass("loanAmount")} />
                 <FieldError name="loanAmount" />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">Employment Type <span className="text-red-500">*</span></label>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Employment Type <span className="text-red-500">*</span></label>
                 <select name="employmentType" value={formData.employmentType} onChange={handleChange} onBlur={handleBlur} className={inputClass("employmentType")}>
-                  <option value="">Select type</option>
+                  <option value="">Select</option>
                   <option>Salaried</option>
                   <option>Self Employed</option>
                 </select>
                 <FieldError name="employmentType" />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">Yearly Income (INR) <span className="text-red-500">*</span></label>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Yearly Income (INR) <span className="text-red-500">*</span></label>
                 <input name="yearlyIncome" value={formData.yearlyIncome} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. 600000" inputMode="numeric" className={inputClass("yearlyIncome")} />
                 <FieldError name="yearlyIncome" />
               </div>
@@ -507,7 +526,7 @@ export default function ApplyLoan() {
               >
                 ← Back to Personal Details
               </button>
-              <button type="submit" disabled={loading} className="flex-1 rounded-2xl bg-blue-600 py-3 text-sm sm:text-base text-white font-bold tracking-wide shadow-lg shadow-blue-600/30 transition-all hover:bg-blue-700 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed">
+              <button type="submit" disabled={loading} className="flex-1 px-6 py-3 rounded-lg bg-blue-600 text-white font-bold shadow-md shadow-blue-600/20 transition hover:bg-blue-700 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed">
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
                     <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -516,7 +535,7 @@ export default function ApplyLoan() {
                     </svg>
                     Processing...
                   </span>
-                ) : "Submit Application →"}
+                ) : "✓ Submit Application"}
               </button>
             </div>
           </form>

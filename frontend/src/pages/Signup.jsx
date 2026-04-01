@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import authService from "../services/auth";
 
 export default function Signup() {
     const [phone, setPhone] = useState("");
@@ -60,8 +61,10 @@ export default function Signup() {
 
             const data = await res.json();
             if (res.ok) {
-                localStorage.setItem("token", data.token);
-                localStorage.setItem("userId", data._id);
+                // ✅ Use authService to save auth data with correct keys
+                authService.saveAuth(data.token, { _id: data._id, phone: phone });
+                
+                // Redirect to apply loan
                 navigate("/apply-loan");
             } else {
                 setError(data.message || "Failed to verify OTP");
