@@ -5,10 +5,7 @@ import { trackAction } from "../services/track";
 import { getSessionId } from "../services/session";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/auth";
-
-const API_BASE = import.meta.env.MODE === "development"
-  ? "http://localhost:5000"
-  : "https://loan-app-cqlh.onrender.com";
+import API_BASE from "../services/api";
 
 // ─── Details form ─────────────────────────────────────────────────────────────
 const initialDetails = {

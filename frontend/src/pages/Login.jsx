@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/auth";
+import API_BASE from "../services/api";
 import { Phone, Lock, CheckCircle2 } from "lucide-react";
 
 export default function Login() {
@@ -28,7 +29,7 @@ export default function Login() {
 
         setLoading(true);
         try {
-            const res = await fetch("http://localhost:5000/api/auth/send-otp", {
+            const res = await fetch(`${API_BASE}/api/auth/send-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ phone }),
@@ -58,7 +59,7 @@ export default function Login() {
 
         setLoading(true);
         try {
-            const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
+            const res = await fetch(`${API_BASE}/api/auth/verify-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ phone, otp }),
