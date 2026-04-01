@@ -28,8 +28,15 @@ dotenv.config();
 
 const app = express(); // 🔥 FIRST create app
 
+// ✅ CORS Configuration - Allow frontend domain
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "*",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // 🔥 Routes
