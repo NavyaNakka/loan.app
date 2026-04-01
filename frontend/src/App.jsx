@@ -25,7 +25,8 @@
 // export default App;
 
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import InspiredHome from "./components/InspiredHome";
 
@@ -37,15 +38,67 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Contact from "./pages/Contact";
 import TrackApplication from "./pages/TrackApplication";
+import authService from "./services/auth";
 
 function HomePage() {
   return <InspiredHome />;
 }
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const navigate = useNavigate();
+
+  // ✅ Check authentication on app mount
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = authService.getToken();
+      const userData = authService.getUserData();
+
+      if (token && userData) {
+        setIsAuthenticated(true);
+        setUser(userData);
+        console.log("✅ User already logged in:", userData);
+      } else {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
+
+      setAuthLoading(false);
+    };
+
+    checkAuth();
+  }, []);
+
+  // ✅ Handle logout
+  const handleLogout = () => {
+    authService.clearAuth();
+    setIsAuthenticated(false);
+    setUser(null);
+    navigate("/");
+    console.log("✅ User logged out");
+  };
+
+  // ✅ Handle login (called from ApplyLoan after OTP verification)
+  const handleLogin = (token, userData) => {
+    authService.saveAuth(token, userData);
+    setIsAuthenticated(true);
+    setUser(userData);
+    console.log("✅ User logged in:", userData);
+  };
+
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      <Navbar />
+      <Navbar 
+        isAuthenticated={isAuthenticated} 
+        user={user} 
+        onLogout={handleLogout}
+      />
       <div className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage />} />

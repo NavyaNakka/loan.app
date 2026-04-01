@@ -4,6 +4,7 @@ import axios from "axios";
 import { trackAction } from "../services/track";
 import { getSessionId } from "../services/session";
 import { useNavigate } from "react-router-dom";
+import authService from "../services/auth";
 
 const API_BASE = import.meta.env.MODE === "development"
   ? "http://localhost:5000"
@@ -110,7 +111,15 @@ export default function ApplyLoan() {
     }
     try {
       setOtpLoading(true);
-      await axios.post(`${API_BASE}/api/auth/verify-otp`, { phone, otp });
+      const response = await axios.post(`${API_BASE}/api/auth/verify-otp`, { phone, otp });
+      
+      // ✅ Save authentication token and user data
+      const { token, _id, phone: userPhone } = response.data;
+      if (token) {
+        authService.saveAuth(token, { _id, phone: userPhone });
+        console.log("✅ User authenticated and logged in");
+      }
+      
       setVerifiedPhone(phone);
       trackAction("otp verified");
       setStep("personal");

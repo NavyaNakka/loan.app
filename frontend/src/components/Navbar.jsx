@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { trackAction } from "../services/track";
-import { ChevronDown, Menu, X, Landmark, CreditCard, Banknote, Wallet, Coins } from "lucide-react";
+import { ChevronDown, Menu, X, Landmark, CreditCard, Banknote, Wallet, Coins, LogOut } from "lucide-react";
 
-export default function Navbar() {
+export default function Navbar({ isAuthenticated = false, user = null, onLogout = null }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loansDropdownOpen, setLoansDropdownOpen] = useState(false);
   const [mobileLoanOpen, setMobileLoanOpen] = useState(false);
@@ -139,15 +139,33 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* DESKTOP APPLY BUTTON ONLY */}
+        {/* DESKTOP APPLY BUTTON / LOGOUT */}
         <div className="hidden md:flex items-center gap-4">
-          <Link
-            to="/apply-loan"
-            onClick={() => trackAction("navbar apply now")}
-            className="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm shadow-blue-500/30 transition hover:bg-blue-700 hover:shadow-blue-600/40 active:scale-95"
-          >
-            Apply Now
-          </Link>
+          {isAuthenticated && user ? (
+            <>
+              <span className="text-sm font-semibold text-slate-700">
+                {user.phone ? `+91 ${user.phone.slice(-10)}` : "Welcome"}
+              </span>
+              <button
+                onClick={() => {
+                  trackAction("navbar logout");
+                  onLogout?.();
+                }}
+                className="flex items-center gap-2 rounded-xl bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-500/30 transition hover:bg-red-700 hover:shadow-red-600/40 active:scale-95"
+              >
+                <LogOut size={16} />
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/apply-loan"
+              onClick={() => trackAction("navbar apply now")}
+              className="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm shadow-blue-500/30 transition hover:bg-blue-700 hover:shadow-blue-600/40 active:scale-95"
+            >
+              Apply Now
+            </Link>
+          )}
         </div>
 
         {/* MOBILE MENU BUTTON */}
@@ -216,14 +234,33 @@ export default function Navbar() {
               )}
             </div>
 
-            <div className="flex flex-col gap-3 mt-6">
-              <Link
-                to="/apply-loan"
-                onClick={() => { trackAction("navbar apply now"); setIsOpen(false); }}
-                className="block w-full rounded-xl bg-blue-600 px-6 py-4 text-center text-base font-bold text-white shadow-sm transition hover:bg-blue-700 active:scale-95"
-              >
-                Apply Now
-              </Link>
+            <div className="flex flex-col gap-3 mt-6 border-t border-slate-200 pt-4">
+              {isAuthenticated && user ? (
+                <>
+                  <div className="px-4 py-2 text-sm font-semibold text-slate-700">
+                    Logged in as: {user.phone ? `+91 ${user.phone.slice(-10)}` : "User"}
+                  </div>
+                  <button
+                    onClick={() => {
+                      trackAction("navbar logout mobile");
+                      onLogout?.();
+                      setIsOpen(false);
+                    }}
+                    className="flex items-center justify-center gap-2 w-full rounded-xl bg-red-600 px-6 py-4 text-center text-base font-bold text-white shadow-sm transition hover:bg-red-700 active:scale-95"
+                  >
+                    <LogOut size={18} />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/apply-loan"
+                  onClick={() => { trackAction("navbar apply now"); setIsOpen(false); }}
+                  className="block w-full rounded-xl bg-blue-600 px-6 py-4 text-center text-base font-bold text-white shadow-sm transition hover:bg-blue-700 active:scale-95"
+                >
+                  Apply Now
+                </Link>
+              )}
             </div>
           </div>
         </div>
