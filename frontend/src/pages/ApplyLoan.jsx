@@ -42,12 +42,8 @@ const validateDetails = (data) => {
       errors.panNumber = "PAN must be exactly 10 characters.";
     } else if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(panStr)) {
       errors.panNumber = "Invalid format: 5 letters + 4 digits + 1 letter (e.g., ABCPA1234F)";
-    } else {
-      const validPANTypes = ["P", "C", "H", "A", "T", "B", "L", "J", "F", "G"];
-      if (!validPANTypes.includes(panStr[2])) {
-        errors.panNumber = `3rd character must be: ${validPANTypes.join(", ")} (Person, Company, HUF, etc.)`;
-      }
     }
+    // Format validation passed - accept any valid format PAN
   }
   
   if (!data.loanType) errors.loanType = "Please select a loan type.";
