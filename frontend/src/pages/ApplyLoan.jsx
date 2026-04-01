@@ -31,8 +31,25 @@ const validateDetails = (data) => {
   if (!data.pincode.trim()) errors.pincode = "Pincode is required.";
   else if (!/^\d+$/.test(data.pincode)) errors.pincode = "Pincode must contain digits only.";
   else if (data.pincode.length !== 6) errors.pincode = "Pincode must be exactly 6 digits.";
-  if (!data.panNumber.trim()) errors.panNumber = "PAN Number is required.";
-  else if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(data.panNumber.toUpperCase())) errors.panNumber = "Invalid PAN format (e.g., ABCDE1234F).";
+  
+  // ✅ Enhanced PAN validation
+  if (!data.panNumber.trim()) {
+    errors.panNumber = "PAN Number is required.";
+  } else {
+    const panStr = String(data.panNumber).toUpperCase().trim();
+    
+    if (panStr.length !== 10) {
+      errors.panNumber = "PAN must be exactly 10 characters.";
+    } else if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(panStr)) {
+      errors.panNumber = "Invalid format: 5 letters + 4 digits + 1 letter (e.g., ABCPA1234F)";
+    } else {
+      const validPANTypes = ["P", "C", "H", "A", "T", "B", "L", "J", "F", "G"];
+      if (!validPANTypes.includes(panStr[2])) {
+        errors.panNumber = `3rd character must be: ${validPANTypes.join(", ")} (Person, Company, HUF, etc.)`;
+      }
+    }
+  }
+  
   if (!data.loanType) errors.loanType = "Please select a loan type.";
   if (!data.loanAmount.toString().trim()) errors.loanAmount = "Loan amount is required.";
   else if (!/^\d+(\.\d{1,2})?$/.test(data.loanAmount)) errors.loanAmount = "Enter a valid loan amount (digits only).";

@@ -84,11 +84,30 @@ const getPANError = (pan) => {
 
   const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
   if (!panRegex.test(panStr)) {
-    return "Invalid PAN format. Expected: ABCDE1234F";
+    return "Invalid PAN format. Must be: 5 letters + 4 digits + 1 letter (e.g., ABCPA1234F)";
+  }
+
+  const validPANTypes = {
+    P: "Individual",
+    C: "Company",
+    H: "HUF",
+    A: "AOP",
+    T: "Trust",
+    B: "Body of individuals",
+    L: "Local authority",
+    J: "Artificial Juridical Person",
+    F: "Foreign entity",
+    G: "Government",
+  };
+
+  const panType = panStr[2]; // 3rd letter indicates type
+  if (!validPANTypes[panType]) {
+    const validTypes = Object.keys(validPANTypes).join(", ");
+    return `Invalid PAN type '${panType}'. 3rd character must be one of: ${validTypes}`;
   }
 
   if (!validatePANChecksum(panStr)) {
-    return "Invalid PAN number. Please enter a valid PAN.";
+    return "Invalid PAN checksum. Please enter a valid PAN number.";
   }
 
   return "";
