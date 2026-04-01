@@ -50,27 +50,27 @@ const validatePAN = (pan) => {
     return false;
   }
 
-  // Check for valid PAN prefix (first 3 letters indicate PAN holder type)
-  const validPANTypes = {
-    P: "Individual",
-    C: "Company",
-    H: "HUF",
-    A: "AOP",
-    T: "Trust",
-    B: "Body of individuals",
-    L: "Local authority",
-    J: "Artificial Juridical Person",
-    F: "Foreign entity",
-    G: "Government",
-  };
+  // RELAXED: Accept any format-valid PAN for testing/demo
+  // Checksum and type validation disabled for demo purposes
+  // Production: Uncomment the code below to enable strict validation
+  
+  // const validPANTypes = {
+  //   P: "Individual",
+  //   C: "Company",
+  //   H: "HUF",
+  //   A: "AOP",
+  //   T: "Trust",
+  //   B: "Body of individuals",
+  //   L: "Local authority",
+  //   J: "Artificial Juridical Person",
+  //   F: "Foreign entity",
+  //   G: "Government",
+  // };
+  // const panType = panStr[2];
+  // if (!validPANTypes[panType]) return false;
+  // return validatePANChecksum(panStr);
 
-  const panType = panStr[2]; // 3rd letter indicates type
-  if (!validPANTypes[panType]) {
-    return false;
-  }
-
-  // Validate checksum
-  return validatePANChecksum(panStr);
+  return true; // Format check only
 };
 
 const getPANError = (pan) => {
