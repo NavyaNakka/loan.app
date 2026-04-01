@@ -82,16 +82,16 @@ export default function Login() {
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 flex items-center justify-center px-4 py-12">
             <div className="w-full max-w-md">
                 {/* Logo/Header */}
-                <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 shadow-lg">
-                        <Lock className="w-8 h-8 text-white" />
+                <div className="text-center mb-8 sm:mb-10">
+                    <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-blue-600 rounded-2xl mb-4 shadow-lg">
+                        <Lock className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h1>
-                    <p className="text-slate-600">Sign in to your KreditKonnect account</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Welcome Back</h1>
+                    <p className="text-sm sm:text-base text-slate-600">Sign in to your KreditKonnect account</p>
                 </div>
 
                 {/* Main Card */}
-                <div className="bg-white rounded-2xl shadow-xl shadow-blue-900/10 ring-1 ring-blue-100/50 p-8 sm:p-10">
+                <div className="bg-white rounded-2xl shadow-xl shadow-blue-900/10 ring-1 ring-blue-100/50 p-6 sm:p-8 lg:p-10">
                     {error && (
                         <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200">
                             <p className="text-sm font-medium text-red-800">{error}</p>
@@ -104,18 +104,18 @@ export default function Login() {
                                 <label className="block text-sm font-semibold text-slate-900 mb-3">
                                     Mobile Number
                                 </label>
-                                <div className="flex gap-3">
-                                    <div className="flex items-center px-4 rounded-xl border border-slate-300 bg-slate-50">
-                                        <span className="text-sm font-semibold text-slate-600">+91</span>
+                                <div className="flex gap-2 sm:gap-3">
+                                    <div className="flex items-center px-2 sm:px-4 rounded-lg sm:rounded-xl border border-slate-300 bg-slate-50 shrink-0">
+                                        <span className="text-xs sm:text-sm font-semibold text-slate-600">+91</span>
                                     </div>
                                     <input
                                         type="tel"
                                         value={phone}
                                         onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                                        placeholder="10-digit number"
+                                        placeholder="10 digits"
                                         inputMode="numeric"
                                         maxLength={10}
-                                        className="flex-1 px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white placeholder:text-slate-400"
+                                        className="flex-1 px-3 sm:px-4 py-3 rounded-lg sm:rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white placeholder:text-slate-400 text-sm sm:text-base"
                                     />
                                 </div>
                                 {phone && !/^\d{10}$/.test(phone) && (
@@ -126,14 +126,15 @@ export default function Login() {
                             <button
                                 type="submit"
                                 disabled={loading || phone.length !== 10}
-                                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg shadow-blue-600/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                                className="w-full py-3 sm:py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base shadow-lg shadow-blue-600/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                             >
                                 {loading ? "Sending OTP..." : "Send OTP"}
                             </button>
 
-                            <p className="text-center text-xs text-slate-500 pt-4">
-                                Test credentials: Phone: <span className="font-mono font-bold text-slate-700">9999999999</span> | OTP: <span className="font-mono font-bold text-slate-700">1234</span>
-                            </p>
+                            <div className="text-center text-xs sm:text-sm text-slate-500 pt-4 space-y-1">
+                                <p><span className="font-semibold text-slate-700">Test Phone:</span> <span className="font-mono font-bold text-slate-700">9999999999</span></p>
+                                <p><span className="font-semibold text-slate-700">Test OTP:</span> <span className="font-mono font-bold text-slate-700">1234</span></p>
+                            </div>
                         </form>
                     ) : (
                         <form onSubmit={handleVerifyOtp} className="space-y-6">
@@ -149,7 +150,7 @@ export default function Login() {
                                     placeholder="0000"
                                     inputMode="numeric"
                                     maxLength={4}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-center text-2xl tracking-widest font-semibold bg-white placeholder:text-slate-300"
+                                    className="w-full px-4 py-4 sm:py-3 rounded-lg sm:rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-center text-xl sm:text-2xl tracking-widest font-semibold bg-white placeholder:text-slate-300"
                                 />
                             </div>
 
