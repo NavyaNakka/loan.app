@@ -152,6 +152,22 @@ export default function ApplyLoan() {
       
       setVerifiedPhone(phone);
       trackAction("otp verified");
+      
+      // ✅ Fetch previous form data for auto-fill
+      try {
+        const userDataResponse = await axios.get(`${API_BASE}/api/apply/user/${phone}`);
+        if (userDataResponse.data.success && userDataResponse.data.user) {
+          console.log("✅ Previous form data found - auto-filling...", userDataResponse.data.user);
+          setFormData(prev => ({
+            ...prev,
+            ...userDataResponse.data.user,
+          }));
+        }
+      } catch (err) {
+        // No previous data found - that's okay, user is new or has no previous applications
+        console.log("ℹ️ No previous application found for this number");
+      }
+      
       setStep("personal");
     } catch (err) {
       setOtpError(err.response?.data?.message || "Invalid OTP. Please try again.");

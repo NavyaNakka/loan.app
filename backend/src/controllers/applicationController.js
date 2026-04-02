@@ -178,3 +178,48 @@ export const applyLoan = async (req, res) => {
     });
   }
 };
+
+// ✅ Fetch user data by phone number (for auto-fill)
+export const getUserByPhone = async (req, res) => {
+  try {
+    const { phone } = req.params;
+
+    if (!phone || !/^\d{10}$/.test(phone)) {
+      return res.status(400).json({
+        message: "Invalid phone number format",
+      });
+    }
+
+    // Find the latest application for this phone number
+    const user = await UserInfo.findOne({ phone })
+      .sort({ createdAt: -1 }) // Get most recent submission
+      .select("fullName gender pincode panNumber loanType loanAmount employmentType yearlyIncome phone");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "No previous application found for this phone number",
+      });
+    }
+
+    res.json({
+      success: true,
+      user: {
+        fullName: user.fullName,
+        gender: user.gender,
+        pincode: user.pincode,
+        panNumber: user.panNumber,
+        loanType: user.loanType,
+        loanAmount: user.loanAmount.toString(),
+        employmentType: user.employmentType,
+        yearlyIncome: user.yearlyIncome.toString(),
+      },
+    });
+
+  } catch (err) {
+    console.error("❌ ERROR in getUserByPhone:", err.message);
+    res.status(500).json({ 
+      error: err.message,
+      details: process.env.NODE_ENV === "development" ? err.stack : undefined,
+    });
+  }
+};
