@@ -78,7 +78,7 @@ export default function Navbar({ isAuthenticated = false, user = null, onLogout 
             />
           </span>
           <span className="flex flex-col whitespace-nowrap leading-none">
-            <span className="text-[15px] sm:text-base lg:text-[17px] font-extrabold tracking-[-0.03em] text-slate-900">KreditKonnect</span>
+            <span className="text-[19px] sm:text-[21px] lg:text-[23px] font-extrabold tracking-[-0.03em] text-slate-900">KreditKonnect</span>
           </span>
         </Link>
 

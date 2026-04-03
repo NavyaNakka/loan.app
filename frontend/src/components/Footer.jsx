@@ -416,7 +416,7 @@ export default function Footer() {
                 <img src="/kk-logo.svg" alt="KreditKonnect" className="h-full w-full object-contain" />
               </span>
               <span className="flex flex-col leading-none">
-                <span className="text-[15px] font-extrabold tracking-tight text-white">KreditKonnect</span>
+                <span className="text-[19px] font-extrabold tracking-tight text-white">KreditKonnect</span>
               </span>
             </div>
 
