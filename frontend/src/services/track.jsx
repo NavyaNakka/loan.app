@@ -1,7 +1,8 @@
 import axios from "axios";
 import { getSessionId } from "./session";
+import API_BASE from "./api";
 
-const BASE_URL = "https://loan-app-cqlh.onrender.com/api/status";
+const BASE_URL = `${API_BASE}/api/status`;
 
 export const trackAction = async (status) => {
   try {

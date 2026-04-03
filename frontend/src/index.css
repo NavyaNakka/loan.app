@@ -6,12 +6,12 @@
 
 html {
   scroll-behavior: smooth;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 @media (max-width: 640px) {
   html {
-    font-size: 11px;
+    font-size: 13px;
   }
 }
 
