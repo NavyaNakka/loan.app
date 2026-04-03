@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import authService from "../services/auth";
 import API_BASE from "../services/api";
 import { Phone, Lock, CheckCircle2 } from "lucide-react";
@@ -180,7 +180,7 @@ export default function Login() {
 
                 {/* Footer */}
                 <p className="text-center text-xs text-slate-600 mt-8">
-                    By signing in, you agree to our <a href="/terms" className="text-blue-600 hover:underline font-medium">Terms</a> and <a href="/privacy" className="text-blue-600 hover:underline font-medium">Privacy Policy</a>
+                    By signing in, you agree to our <Link to="/terms" className="text-blue-600 hover:underline font-medium">Terms</Link> and <Link to="/privacy" className="text-blue-600 hover:underline font-medium">Privacy Policy</Link>
                 </p>
             </div>
         </div>
