@@ -77,7 +77,8 @@ export default function ApplyLoan() {
   const [phone, setPhone] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
-  const [otpLoading, setOtpLoading] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [otpError, setOtpError] = useState("");
   const [verifiedPhone, setVerifiedPhone] = useState("");
 
@@ -144,14 +145,15 @@ export default function ApplyLoan() {
       setOtpError("Please enter a valid 10-digit mobile number.");
       return;
     }
+    setOtpSent(true);
     try {
-      setOtpLoading(true);
+      setSendingOtp(true);
       await axios.post(`${API_BASE}/api/auth/send-otp`, { phone });
-      setOtpSent(true);
     } catch (err) {
+      setOtpSent(false);
       setOtpError(err.response?.data?.message || "Failed to send OTP. Try again.");
     } finally {
-      setOtpLoading(false);
+      setSendingOtp(false);
     }
   };
 
@@ -162,7 +164,7 @@ export default function ApplyLoan() {
       return;
     }
     try {
-      setOtpLoading(true);
+      setVerifyingOtp(true);
       const response = await axios.post(`${API_BASE}/api/auth/verify-otp`, {
         phone,
         otp,
@@ -204,7 +206,7 @@ export default function ApplyLoan() {
     } catch (err) {
       setOtpError(err.response?.data?.message || "Invalid OTP. Please try again.");
     } finally {
-      setOtpLoading(false);
+      setVerifyingOtp(false);
     }
   };
 
@@ -409,13 +411,14 @@ export default function ApplyLoan() {
                   placeholder="Enter 4-digit OTP"
                   inputMode="numeric"
                   maxLength={4}
+                  disabled={sendingOtp}
                   className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 bg-white"
                 />
                 <p className="mt-1.5 text-xs text-slate-500">
-                  OTP sent to +91 {phone}.{" "}
+                  {sendingOtp ? `Sending OTP to +91 ${phone}...` : `OTP sent to +91 ${phone}.`}{" "}
                   <button
                     type="button"
-                    onClick={() => { setOtpSent(false); setOtp(""); setOtpError(""); }}
+                    onClick={() => { if (!sendingOtp) { setOtpSent(false); setOtp(""); setOtpError(""); } }}
                     className="font-semibold text-blue-600 hover:underline"
                   >
                     Change number
@@ -436,16 +439,16 @@ export default function ApplyLoan() {
             <button
               type="button"
               onClick={otpSent ? handleVerifyOtp : handleSendOtp}
-              disabled={otpLoading}
+              disabled={sendingOtp || verifyingOtp || (otpSent && otp.length !== 4)}
               className="mt-6 w-full px-6 py-3 rounded-lg bg-blue-600 text-white font-bold shadow-md shadow-blue-600/20 transition hover:bg-blue-700 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {otpLoading ? (
+              {sendingOtp || verifyingOtp ? (
                 <span className="flex items-center justify-center gap-2">
                   <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                   </svg>
-                  {otpSent ? "Verifying..." : "Sending OTP..."}
+                  {sendingOtp ? "Sending OTP..." : "Verifying..."}
                 </span>
               ) : otpSent ? "Verify & Continue →" : "Send OTP"}
             </button>

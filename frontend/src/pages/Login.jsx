@@ -10,7 +10,8 @@ export default function Login() {
     const [otp, setOtp] = useState("");
     const [step, setStep] = useState(1);
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [sendingOtp, setSendingOtp] = useState(false);
+    const [verifyingOtp, setVerifyingOtp] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,7 +29,8 @@ export default function Login() {
             return;
         }
 
-        setLoading(true);
+        setStep(2);
+        setSendingOtp(true);
         try {
             console.log("📤 Sending OTP to:", API_BASE, "/api/auth/send-otp");
             const res = await fetch(`${API_BASE}/api/auth/send-otp`, {
@@ -39,15 +41,16 @@ export default function Login() {
 
             const data = await res.json();
             if (res.ok) {
-                setStep(2);
             } else {
+                setStep(1);
                 setError(data.message || "Failed to send OTP");
             }
         } catch (err) {
             console.error("❌ OTP Send Error:", err);
+            setStep(1);
             setError(`Error: ${err.message || "Connection failed. Check API URL."}`);
         } finally {
-            setLoading(false);
+            setSendingOtp(false);
         }
     };
 
@@ -60,7 +63,7 @@ export default function Login() {
             return;
         }
 
-        setLoading(true);
+        setVerifyingOtp(true);
         try {
             console.log("📤 Verifying OTP to:", API_BASE, "/api/auth/verify-otp");
             const res = await fetch(`${API_BASE}/api/auth/verify-otp`, {
@@ -80,7 +83,7 @@ export default function Login() {
             console.error("❌ OTP Verify Error:", err);
             setError(`Error: ${err.message || "Connection failed. Check API URL."}`);
         } finally {
-            setLoading(false);
+            setVerifyingOtp(false);
         }
     };
 
@@ -131,10 +134,10 @@ export default function Login() {
 
                             <button
                                 type="submit"
-                                disabled={loading || phone.length !== 10}
+                                disabled={sendingOtp || phone.length !== 10}
                                 className="w-full py-3 sm:py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base shadow-lg shadow-blue-600/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                             >
-                                {loading ? "Sending OTP..." : "Send OTP"}
+                                {sendingOtp ? "Sending OTP..." : "Send OTP"}
                             </button>
 
                         </form>
@@ -144,7 +147,9 @@ export default function Login() {
                                 <label className="block text-sm font-semibold text-slate-900 mb-3">
                                     Enter OTP
                                 </label>
-                                <p className="text-xs text-slate-600 mb-3">We've sent a 4-digit code to +91 {phone}</p>
+                                <p className="text-xs text-slate-600 mb-3">
+                                    {sendingOtp ? `Sending a 4-digit code to +91 ${phone}...` : `We've sent a 4-digit code to +91 ${phone}`}
+                                </p>
                                 <input
                                     type="text"
                                     value={otp}
@@ -152,16 +157,17 @@ export default function Login() {
                                     placeholder="0000"
                                     inputMode="numeric"
                                     maxLength={4}
+                                    disabled={sendingOtp}
                                     className="w-full px-4 py-4 sm:py-3 rounded-lg sm:rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-center text-xl sm:text-2xl tracking-widest font-semibold bg-white placeholder:text-slate-300"
                                 />
                             </div>
 
                             <button
                                 type="submit"
-                                disabled={loading || otp.length !== 4}
+                                disabled={sendingOtp || verifyingOtp || otp.length !== 4}
                                 className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg shadow-blue-600/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                             >
-                                {loading ? "Verifying..." : "Verify & Login"}
+                                {sendingOtp ? "Sending OTP..." : verifyingOtp ? "Verifying..." : "Verify & Login"}
                             </button>
 
                             <button
@@ -171,6 +177,7 @@ export default function Login() {
                                     setOtp("");
                                     setError("");
                                 }}
+                                disabled={sendingOtp}
                                 className="w-full py-2 text-slate-600 hover:text-slate-900 text-sm font-medium transition-all"
                             >
                                 Use different number

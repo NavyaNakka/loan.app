@@ -375,6 +375,13 @@ const socials = [
 ];
 
 export default function Footer() {
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <footer className="bg-slate-900 text-white">
 
@@ -470,12 +477,13 @@ export default function Footer() {
                   {items.map((item) => (
                     <li key={item.label}>
                       {item.to.startsWith("/#") ? (
-                        <a
-                          href={item.to}
-                          className="text-sm text-slate-400 transition hover:text-white hover:translate-x-0.5 inline-block"
+                        <button
+                          type="button"
+                          onClick={() => scrollToSection(item.to.replace("/#", ""))}
+                          className="inline-block text-sm text-slate-400 transition hover:text-white hover:translate-x-0.5"
                         >
                           {item.label}
-                        </a>
+                        </button>
                       ) : (
                         <Link
                           to={item.to}

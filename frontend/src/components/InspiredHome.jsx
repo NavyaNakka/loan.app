@@ -32,6 +32,13 @@ const steps = [
 export default function InspiredHome() {
   const prefersReducedMotion = useReducedMotion();
 
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   const getLogoMotion = (motionType, active, index) => {
     if (prefersReducedMotion) {
       return {};
@@ -161,13 +168,16 @@ export default function InspiredHome() {
               >
                 Apply Now
               </Link>
-              <a
-                href="#process"
-                onClick={() => trackAction("hero process click")}
+              <button
+                type="button"
+                onClick={() => {
+                  trackAction("hero process click");
+                  scrollToSection("process");
+                }}
                 className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-700"
               >
                 See Process
-              </a>
+              </button>
             </div>
 
             <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-2">

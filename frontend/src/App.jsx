@@ -25,7 +25,7 @@
 // export default App;
 
 
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import InspiredHome from "./components/InspiredHome";
@@ -148,6 +148,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/track-application" element={<TrackApplication />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
     </div>
