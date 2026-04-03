@@ -79,7 +79,6 @@ export default function Navbar({ isAuthenticated = false, user = null, onLogout 
           </span>
           <span className="flex flex-col whitespace-nowrap leading-none">
             <span className="text-[15px] sm:text-base lg:text-[17px] font-extrabold tracking-[-0.03em] text-slate-900">KreditKonnect</span>
-            <span className="mt-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.22em] text-blue-600">Connect. Credit. Grow.</span>
           </span>
         </Link>
 
