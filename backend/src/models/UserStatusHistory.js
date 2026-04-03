@@ -7,7 +7,7 @@ const schema = new mongoose.Schema({
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "UserInfo",
+    ref: "User",
     default: null,
   },
   status: {

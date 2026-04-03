@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import authService from "../services/auth";
 import API_BASE from "../services/api";
+import { getSessionId } from "../services/session";
 import { Phone, Lock, CheckCircle2 } from "lucide-react";
 
 export default function Login() {
@@ -65,7 +66,7 @@ export default function Login() {
             const res = await fetch(`${API_BASE}/api/auth/verify-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ phone, otp }),
+                body: JSON.stringify({ phone, otp, sessionId: getSessionId() }),
             });
 
             const data = await res.json();

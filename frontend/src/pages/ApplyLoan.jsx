@@ -163,7 +163,11 @@ export default function ApplyLoan() {
     }
     try {
       setOtpLoading(true);
-      const response = await axios.post(`${API_BASE}/api/auth/verify-otp`, { phone, otp });
+      const response = await axios.post(`${API_BASE}/api/auth/verify-otp`, {
+        phone,
+        otp,
+        sessionId: getSessionId(),
+      });
       
       // ✅ Save authentication token and user data
       const { token, _id, phone: userPhone, hasApplication, lenderName, lenderStatus, approvedLenders } = response.data;

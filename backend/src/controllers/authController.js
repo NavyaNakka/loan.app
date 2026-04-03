@@ -39,6 +39,7 @@ export const updateProfile = async (req, res) => {
 };
 import User from "../models/User.js";
 import UserInfo from "../models/UserInfo.js";
+import UserStatusHistory from "../models/UserStatusHistory.js";
 import jwt from "jsonwebtoken";
 
 const DEFAULT_APPROVED_LENDERS = [
@@ -92,7 +93,7 @@ export const sendOtp = async (req, res) => {
 
 export const verifyOtp = async (req, res) => {
     try {
-        const { phone, otp } = req.body;
+        const { phone, otp, sessionId } = req.body;
         if (!phone || !otp) return res.status(400).json({ message: "Phone and OTP are required" });
 
         // Hardcode OTP for development, later replace with real OTP service
@@ -104,6 +105,13 @@ export const verifyOtp = async (req, res) => {
 
         if (!user) {
             user = await User.create({ phone });
+        }
+
+        if (sessionId) {
+            await UserStatusHistory.updateMany(
+                { sessionId },
+                { userId: user._id, lastModifiedOn: new Date() }
+            );
         }
 
         const existingApplication = await UserInfo.findOne({ phone })

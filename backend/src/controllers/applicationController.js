@@ -1,5 +1,6 @@
  
 import UserInfo from "../models/UserInfo.js";
+import User from "../models/User.js";
 import UserStatusHistory from "../models/UserStatusHistory.js";
 
 const DEFAULT_APPROVED_LENDERS = [
@@ -182,6 +183,8 @@ export const applyLoan = async (req, res) => {
       yearlyIncome: parseInt(formData.yearlyIncome) || 0,
     };
 
+    const authUser = phone ? await User.findOne({ phone }) : null;
+
     // Create new application
     const user = await UserInfo.create({
       ...cleanFormData,
@@ -191,11 +194,21 @@ export const applyLoan = async (req, res) => {
       consentAt: new Date(),
     });
 
+    if (authUser) {
+      authUser.fullName = cleanFormData.fullName;
+      authUser.gender = cleanFormData.gender;
+      authUser.pincode = cleanFormData.pincode;
+      authUser.panNumber = panNumber;
+      authUser.employmentType = cleanFormData.employmentType;
+      authUser.yearlyIncome = String(cleanFormData.yearlyIncome);
+      await authUser.save();
+    }
+
     // Link session to user
     if (sessionId) {
       await UserStatusHistory.updateMany(
         { sessionId },
-        { userId: user._id }
+        { userId: authUser?._id || null, lastModifiedOn: new Date() }
       );
     }
 
