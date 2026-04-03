@@ -417,7 +417,7 @@ export default function Footer() {
               </span>
               <span className="flex flex-col leading-none">
                 <span className="text-[15px] font-extrabold tracking-tight text-white">KreditKonnect</span>
-                <span className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-blue-400">Loan Marketplace</span>
+                <span className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-blue-400">Smart Lending Network</span>
               </span>
             </div>
 
