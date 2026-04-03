@@ -138,6 +138,7 @@
 // }
 import { useNavigate } from "react-router-dom";
 import { trackAction } from "../services/track";
+import { motion, useReducedMotion } from "framer-motion";
 import { Banknote, Wallet, CreditCard, Landmark, TrendingUp, Coins, FileText, BarChart4 } from "lucide-react";
 
 const products = [
@@ -186,10 +187,11 @@ const services = [
   },
 ];
 
-function Card({ title, desc, icon: Icon, onClick, clickable }) {
+function Card({ title, desc, icon: Icon, onClick, clickable, motionProps }) {
   return (
-    <div
+    <motion.div
       onClick={onClick}
+      {...motionProps}
       className={`group bg-white p-4 sm:p-6 lg:p-8 transition-all duration-300 relative z-10 
       ${clickable ? "cursor-pointer hover:bg-slate-50 hover:shadow-xl hover:shadow-blue-900/5" : ""}`}
     >
@@ -209,12 +211,13 @@ function Card({ title, desc, icon: Icon, onClick, clickable }) {
       <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed pr-2">
         {desc}
       </p>
-    </div>
+    </motion.div>
   );
 }
 
 export default function ProductsSection() {
   const navigate = useNavigate();
+  const prefersReducedMotion = useReducedMotion();
 
   const clickableTitles = [
     "Personal Loan",
@@ -233,6 +236,35 @@ export default function ProductsSection() {
       else if (title === "Gold Loan") { navigate("/apply-loan?type=gold_loan"); }
       else { navigate("/apply-loan"); }
     }
+  };
+
+  const getBoomerangMotion = (index) => {
+    if (prefersReducedMotion) {
+      return {};
+    }
+
+    const direction = index % 2 === 0 ? 1 : -1;
+
+    return {
+      initial: { x: 0, y: 0, rotate: 0 },
+      animate: {
+        x: [0, 7 * direction, 0],
+        y: [0, -5, 0],
+        rotate: [0, 1.5 * direction, 0],
+      },
+      transition: {
+        duration: 3.2 + (index % 3) * 0.35,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: index * 0.12,
+      },
+      whileHover: {
+        x: 0,
+        y: -8,
+        rotate: 0,
+        transition: { duration: 0.2 },
+      },
+    };
   };
 
   return (
@@ -259,6 +291,7 @@ export default function ProductsSection() {
                   desc={item.desc}
                   icon={item.icon}
                   clickable={true}
+                  motionProps={getBoomerangMotion(index)}
                   onClick={() => handleCardClick(item.title, isClickable)}
                 />
               );
@@ -282,6 +315,7 @@ export default function ProductsSection() {
                 desc={item.desc}
                 icon={item.icon}
                 clickable={true}
+                motionProps={getBoomerangMotion(index + products.length)}
                 onClick={() => handleCardClick(item.title, false)}
               />
             ))}

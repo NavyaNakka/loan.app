@@ -2,6 +2,38 @@
 import UserInfo from "../models/UserInfo.js";
 import UserStatusHistory from "../models/UserStatusHistory.js";
 
+const DEFAULT_APPROVED_LENDERS = [
+  {
+    name: "Ram Fincorp",
+    url: "https://applyonline.ramfincorp.com/?utm_source=kreditkonnect",
+  },
+];
+
+const normalizeApprovedLenders = (application) => {
+  const approvedLenders = Array.isArray(application?.approvedLenders)
+    ? application.approvedLenders
+        .map((lender) => ({
+          name: String(lender?.name || "").trim(),
+          url: String(lender?.url || "").trim(),
+        }))
+        .filter((lender) => lender.name && lender.url)
+    : [];
+
+  if (approvedLenders.length > 0) {
+    return approvedLenders;
+  }
+
+  const fallbackLenderName = String(application?.lenderName || "Ram Fincorp").trim();
+  const fallbackLender = DEFAULT_APPROVED_LENDERS.find((lender) => lender.name === fallbackLenderName);
+
+  return [
+    fallbackLender || {
+      name: fallbackLenderName || "Ram Fincorp",
+      url: "https://applyonline.ramfincorp.com/?utm_source=kreditkonnect",
+    },
+  ];
+};
+
 // ✅ PAN Validation Functions (Inline)
 const validatePANChecksum = (pan) => {
   const panChars = pan.substring(0, 9);
@@ -131,7 +163,7 @@ export const applyLoan = async (req, res) => {
     }
 
     // Validate required fields
-    const requiredFields = ["fullName", "gender", "pincode", "loanType", "loanAmount", "employmentType", "yearlyIncome"];
+    const requiredFields = ["fullName", "gender", "pincode", "loanAmount", "employmentType", "yearlyIncome"];
     for (const field of requiredFields) {
       if (!formData[field]) {
         return res.status(400).json({
@@ -143,6 +175,9 @@ export const applyLoan = async (req, res) => {
     // ✅ Convert number fields to actual numbers
     const cleanFormData = {
       ...formData,
+      lenderName: "Ram Fincorp",
+      lenderStatus: "submitted",
+      approvedLenders: DEFAULT_APPROVED_LENDERS,
       loanAmount: parseInt(formData.loanAmount) || 0,
       yearlyIncome: parseInt(formData.yearlyIncome) || 0,
     };
@@ -220,6 +255,189 @@ export const getUserByPhone = async (req, res) => {
     res.status(500).json({ 
       error: err.message,
       details: process.env.NODE_ENV === "development" ? err.stack : undefined,
+    });
+  }
+};
+
+export const checkApplicationByPhone = async (req, res) => {
+  try {
+    const phone = String(req.query.phone || "").trim();
+
+    if (!phone) {
+      return res.status(400).json({
+        message: "phone is required",
+      });
+    }
+
+    const existingApplication = await UserInfo.findOne({ phone })
+      .sort({ createdAt: -1 })
+      .select("lenderName lenderStatus createdAt");
+
+    return res.json({
+      success: true,
+      exists: !!existingApplication,
+      lenderName: existingApplication?.lenderName || "Ram Fincorp",
+      lenderStatus: existingApplication?.lenderStatus || "submitted",
+      approvedLenders: normalizeApprovedLenders(existingApplication),
+      submittedAt: existingApplication?.createdAt || null,
+    });
+  } catch (err) {
+    console.error("❌ ERROR in checkApplicationByPhone:", err.message);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+
+export const getApplicationDetailsByPhone = async (req, res) => {
+  try {
+    const phone = String(req.query.phone || "").trim();
+
+    if (!phone) {
+      return res.status(400).json({
+        message: "phone is required",
+      });
+    }
+
+    const application = await UserInfo.findOne({ phone }).sort({ createdAt: -1 });
+
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found",
+      });
+    }
+
+    const applicationObj = application.toObject();
+    if (!applicationObj.lenderStatus) {
+      applicationObj.lenderStatus = "submitted";
+    }
+    applicationObj.approvedLenders = normalizeApprovedLenders(applicationObj);
+
+    return res.json({
+      success: true,
+      application: applicationObj,
+    });
+  } catch (err) {
+    console.error("❌ ERROR in getApplicationDetailsByPhone:", err.message);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+
+export const updateApplicationDetailsByPhone = async (req, res) => {
+  try {
+    const phone = String(req.body.phone || "").trim();
+
+    if (!phone) {
+      return res.status(400).json({
+        message: "phone is required",
+      });
+    }
+
+    const application = await UserInfo.findOne({ phone }).sort({ createdAt: -1 });
+
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found",
+      });
+    }
+
+    const editableFields = [
+      "fullName",
+      "gender",
+      "pincode",
+      "panNumber",
+      "loanAmount",
+      "employmentType",
+      "yearlyIncome",
+    ];
+
+    for (const field of editableFields) {
+      if (req.body[field] !== undefined) {
+        if (field === "panNumber") {
+          const panNumber = String(req.body.panNumber || "").toUpperCase().trim();
+          if (!validatePAN(panNumber)) {
+            return res.status(400).json({
+              message: getPANError(panNumber) || "Invalid PAN number",
+            });
+          }
+          application.panNumber = panNumber;
+        } else if (field === "loanAmount" || field === "yearlyIncome") {
+          const numericValue = parseInt(req.body[field], 10);
+          if (Number.isNaN(numericValue) || numericValue <= 0) {
+            return res.status(400).json({
+              message: `${field} must be a valid positive number`,
+            });
+          }
+          application[field] = numericValue;
+        } else {
+          application[field] = req.body[field];
+        }
+      }
+    }
+
+    await application.save();
+
+    return res.json({
+      success: true,
+      message: "Application details updated successfully",
+      application,
+    });
+  } catch (err) {
+    console.error("❌ ERROR in updateApplicationDetailsByPhone:", err.message);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+
+export const markLenderInProgressByPhone = async (req, res) => {
+  try {
+    const phone = String(req.body.phone || "").trim();
+    const lenderName = String(req.body.lenderName || "Ram Fincorp").trim();
+
+    if (!phone) {
+      return res.status(400).json({
+        message: "phone is required",
+      });
+    }
+
+    const application = await UserInfo.findOne({ phone }).sort({ createdAt: -1 });
+
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found",
+      });
+    }
+
+    const approvedLenders = normalizeApprovedLenders(application);
+    const existingLender = approvedLenders.find((item) => item.name === lenderName);
+
+    application.approvedLenders = existingLender
+      ? approvedLenders
+      : [
+          ...approvedLenders,
+          {
+            name: lenderName || "Ram Fincorp",
+            url: "https://applyonline.ramfincorp.com/?utm_source=kreditkonnect",
+          },
+        ];
+    application.lenderName = lenderName || application.lenderName || "Ram Fincorp";
+    application.lenderStatus = "in_progress";
+    await application.save();
+
+    return res.json({
+      success: true,
+      message: "Lender marked as in progress",
+      lenderName: application.lenderName,
+      lenderStatus: application.lenderStatus,
+      approvedLenders: normalizeApprovedLenders(application),
+    });
+  } catch (err) {
+    console.error("❌ ERROR in markLenderInProgressByPhone:", err.message);
+    return res.status(500).json({
+      error: err.message,
     });
   }
 };

@@ -6,6 +6,13 @@
 
 html {
   scroll-behavior: smooth;
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  html {
+    font-size: 11px;
+  }
 }
 
 body {
@@ -50,4 +57,5 @@ img {
 .label {
   @apply text-sm font-medium text-slate-700;
 }
+
 

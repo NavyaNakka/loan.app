@@ -38,7 +38,40 @@ export const updateProfile = async (req, res) => {
     res.json({ message: "Profile updated", success: true });
 };
 import User from "../models/User.js";
+import UserInfo from "../models/UserInfo.js";
 import jwt from "jsonwebtoken";
+
+const DEFAULT_APPROVED_LENDERS = [
+    {
+        name: "Ram Fincorp",
+        url: "https://applyonline.ramfincorp.com/?utm_source=kreditkonnect",
+    },
+];
+
+const normalizeApprovedLenders = (application) => {
+    const approvedLenders = Array.isArray(application?.approvedLenders)
+        ? application.approvedLenders
+            .map((lender) => ({
+                name: String(lender?.name || "").trim(),
+                url: String(lender?.url || "").trim(),
+            }))
+            .filter((lender) => lender.name && lender.url)
+        : [];
+
+    if (approvedLenders.length > 0) {
+        return approvedLenders;
+    }
+
+    const fallbackLenderName = String(application?.lenderName || "Ram Fincorp").trim();
+    const fallbackLender = DEFAULT_APPROVED_LENDERS.find((lender) => lender.name === fallbackLenderName);
+
+    return [
+        fallbackLender || {
+            name: fallbackLenderName || "Ram Fincorp",
+            url: "https://applyonline.ramfincorp.com/?utm_source=kreditkonnect",
+        },
+    ];
+};
 
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback_secret', {
@@ -50,9 +83,7 @@ export const sendOtp = async (req, res) => {
     try {
         const { phone } = req.body;
         if (!phone) return res.status(400).json({ message: "Phone number is required" });
-        
-        // Mock sending OTP
-        console.log(`Sending Mock OTP 1234 to ${phone}`);
+
         res.status(200).json({ success: true, message: "OTP sent successfully" });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -66,7 +97,7 @@ export const verifyOtp = async (req, res) => {
 
         // Hardcode OTP for development, later replace with real OTP service
         if (otp !== "1234") {
-            return res.status(400).json({ message: "Invalid OTP. Use 1234 for testing." });
+            return res.status(400).json({ message: "Invalid OTP." });
         }
 
         let user = await User.findOne({ phone });
@@ -75,10 +106,18 @@ export const verifyOtp = async (req, res) => {
             user = await User.create({ phone });
         }
 
+        const existingApplication = await UserInfo.findOne({ phone })
+            .sort({ createdAt: -1 })
+            .select("lenderName lenderStatus approvedLenders");
+
         res.json({
             success: true,
             _id: user._id,
             phone: user.phone,
+            hasApplication: !!existingApplication,
+            lenderName: existingApplication?.lenderName || "Ram Fincorp",
+            lenderStatus: existingApplication?.lenderStatus || "submitted",
+            approvedLenders: normalizeApprovedLenders(existingApplication),
             token: generateToken(user._id),
         });
     } catch (err) {

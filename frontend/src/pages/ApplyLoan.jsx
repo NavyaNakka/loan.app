@@ -7,13 +7,19 @@ import { useNavigate } from "react-router-dom";
 import authService from "../services/auth";
 import API_BASE from "../services/api";
 
+const DEFAULT_APPROVED_LENDERS = [
+  {
+    name: "Ram Fincorp",
+    url: "https://applyonline.ramfincorp.com/?utm_source=kreditkonnect",
+  },
+];
+
 // ─── Details form ─────────────────────────────────────────────────────────────
 const initialDetails = {
   fullName: "",
   gender: "",
   pincode: "",
   panNumber: "",
-  loanType: "Personal Loan",
   loanAmount: "",
   employmentType: "",
   yearlyIncome: "",
@@ -43,7 +49,6 @@ const validateDetails = (data) => {
     // Format validation passed - accept any valid format PAN
   }
   
-  if (!data.loanType) errors.loanType = "Please select a loan type.";
   if (!data.loanAmount.toString().trim()) errors.loanAmount = "Loan amount is required.";
   else if (!/^\d+(\.\d{1,2})?$/.test(data.loanAmount)) errors.loanAmount = "Enter a valid loan amount (digits only).";
   else if (parseFloat(data.loanAmount) <= 0) errors.loanAmount = "Loan amount must be greater than 0.";
@@ -63,7 +68,7 @@ const validateField = (name, value) => {
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function ApplyLoan() {
   const [searchParams] = useSearchParams();
-  const typeParam = searchParams.get("type");
+  const isEditMode = searchParams.get("edit") === "true";
 
   // Step: "otp" | "personal" | "employment"
   const [step, setStep] = useState("otp");
@@ -77,43 +82,60 @@ export default function ApplyLoan() {
   const [verifiedPhone, setVerifiedPhone] = useState("");
 
   // Details step state
-  const [formData, setFormData] = useState({
-    ...initialDetails,
-    loanType: typeParam ? typeParam.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase()) : "Personal Loan",
-  });
+  const [formData, setFormData] = useState(initialDetails);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const redirectToTrackPage = (approvedLenders = DEFAULT_APPROVED_LENDERS, lenderName = "Ram Fincorp") => {
+    navigate("/track-application", {
+      replace: true,
+      state: {
+        approvedLenders,
+        lenderName,
+        lenderUrl: "https://applyonline.ramfincorp.com/?utm_source=kreditkonnect",
+      },
+    });
+  };
+
+  const checkExistingApplication = async (phoneToCheck) => {
+    try {
+      const { data } = await axios.get(`${API_BASE}/api/application/check`, {
+        params: { phone: phoneToCheck },
+      });
+      return data;
+    } catch {
+      return { exists: false };
+    }
+  };
+
   // ✅ Auto-skip OTP if already authenticated and load saved form data
   useEffect(() => {
+    const runInitialFlow = async () => {
     const user = authService.getUserData();
-    const savedFormData = authService.getFormData();
 
     // Skip OTP if user is authenticated
     if (user?.phone) {
       setVerifiedPhone(user.phone);
+      const existing = await checkExistingApplication(user.phone);
+      if (existing?.exists && !isEditMode) {
+        authService.updateUserData({
+          hasApplication: true,
+          lenderName: existing.lenderName || "Ram Fincorp",
+          lenderStatus: existing.lenderStatus || "submitted",
+          approvedLenders: existing.approvedLenders || DEFAULT_APPROVED_LENDERS,
+        });
+        redirectToTrackPage(existing.approvedLenders || DEFAULT_APPROVED_LENDERS, existing.lenderName || "Ram Fincorp");
+        return;
+      }
       setStep("personal");
     }
 
-    // Load saved form data with defaults
-    if (savedFormData) {
-      // Ensure all fields exist by merging with defaults
-      setFormData(prev => ({
-        ...initialDetails,
-        ...savedFormData,
-        // Keep URL param loan type if provided
-        loanType: typeParam ? typeParam.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase()) : savedFormData.loanType || "Personal Loan",
-      }));
-    } else if (typeParam) {
-      // Just set loan type from URL if no saved data
-      setFormData(prev => ({
-        ...prev,
-        loanType: typeParam.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase()),
-      }));
-    }
-  }, []);
+    };
+
+    runInitialFlow();
+  }, [isEditMode]);
 
   // ── OTP Handlers ─────────────────────────────────────────────────────────────
   const handleSendOtp = async () => {
@@ -144,10 +166,16 @@ export default function ApplyLoan() {
       const response = await axios.post(`${API_BASE}/api/auth/verify-otp`, { phone, otp });
       
       // ✅ Save authentication token and user data
-      const { token, _id, phone: userPhone } = response.data;
+      const { token, _id, phone: userPhone, hasApplication, lenderName, lenderStatus, approvedLenders } = response.data;
       if (token) {
-        authService.saveAuth(token, { _id, phone: userPhone });
+        authService.saveAuth(token, { _id, phone: userPhone, hasApplication, lenderName, lenderStatus, approvedLenders });
         console.log("✅ User authenticated and logged in");
+      }
+
+      if (hasApplication && !isEditMode) {
+        trackAction("existing user redirect to track page");
+        redirectToTrackPage(approvedLenders || DEFAULT_APPROVED_LENDERS, lenderName || "Ram Fincorp");
+        return;
       }
       
       setVerifiedPhone(phone);
@@ -202,7 +230,7 @@ export default function ApplyLoan() {
     if (Object.keys(validationErrors).length > 0) return;
     try {
       setLoading(true);
-      trackAction("submit application");
+      trackAction("check offers");
       const sessionId = getSessionId();
       
       const submitData = {
@@ -210,24 +238,20 @@ export default function ApplyLoan() {
         phone: verifiedPhone,
         panNumber: formData.panNumber.toUpperCase().trim(),
         acceptedTerms: true,
+        lenderName: "Ram Fincorp",
         sessionId,
       };
       
-      const response = await axios.post(`${API_BASE}/api/apply`, submitData);
-      
-      // Save form data for future use
-      authService.saveFormData(formData);
-      
-      alert("✅ Application submitted successfully!");
-      setFormData(initialDetails);
-      setErrors({});
-      setTouched({});
-      navigate("/track-application");
-      setStep("otp");
-      setPhone("");
-      setOtp("");
-      setOtpSent(false);
-      setVerifiedPhone("");
+      await axios.post(`${API_BASE}/api/apply`, submitData);
+
+      authService.updateUserData({
+        hasApplication: true,
+        lenderName: "Ram Fincorp",
+        lenderStatus: "submitted",
+        approvedLenders: DEFAULT_APPROVED_LENDERS,
+      });
+
+      redirectToTrackPage(DEFAULT_APPROVED_LENDERS, "Ram Fincorp");
     } catch (error) {
       console.error("❌ Submit Error Details:", {
         status: error.response?.status,
@@ -263,8 +287,50 @@ export default function ApplyLoan() {
         : "focus:border-blue-500 focus:ring-blue-500/20"
     }`;
 
+  const radioGroupClass = (name) =>
+    `rounded-xl border px-3 py-2.5 transition-all ${
+      touched[name] && errors[name]
+        ? "border-red-400 ring-1 ring-red-200"
+        : touched[name] && !errors[name]
+        ? "border-green-400 ring-1 ring-green-200"
+        : "border-slate-300 hover:border-slate-400"
+    }`;
+
+  const DotRadioGroup = ({ name, label, options }) => (
+    <div>
+      <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">{label} <span className="text-red-500">*</span></label>
+      <div className={`${radioGroupClass(name)} grid gap-2 sm:grid-cols-3`} onBlur={handleBlur}>
+        {options.map((option) => {
+          const selected = formData[name] === option;
+          return (
+            <label
+              key={option}
+              className={`flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-medium transition ${
+                selected ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <input
+                type="radio"
+                name={name}
+                value={option}
+                checked={selected}
+                onChange={handleChange}
+                className="sr-only"
+              />
+              <span className={`inline-flex h-4 w-4 items-center justify-center rounded-full border ${selected ? "border-blue-600" : "border-slate-400"}`}>
+                <span className={`h-2 w-2 rounded-full ${selected ? "bg-blue-600" : "bg-transparent"}`} />
+              </span>
+              {option}
+            </label>
+          );
+        })}
+      </div>
+      <FieldError name={name} />
+    </div>
+  );
+
   const personalFields = ["fullName", "gender", "pincode", "panNumber"];
-  const employmentFields = ["loanType", "loanAmount", "employmentType", "yearlyIncome", "acceptedTerms"];
+  const employmentFields = ["loanAmount", "employmentType", "yearlyIncome", "acceptedTerms"];
 
   const validateStepFields = (fields) => {
     const validationErrors = validateDetails(formData);
@@ -351,13 +417,6 @@ export default function ApplyLoan() {
                     Change number
                   </button>
                 </p>
-                {/* Demo hint */}
-                <div className="mt-2 flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2">
-                  <svg className="h-3.5 w-3.5 shrink-0 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                  </svg>
-                  <p className="text-xs text-amber-700 font-medium">Demo mode — use OTP: <span className="font-bold tracking-widest">1234</span></p>
-                </div>
               </div>
             )}
 
@@ -424,16 +483,7 @@ export default function ApplyLoan() {
                 <input name="fullName" value={formData.fullName} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. Rahul Sharma" className={inputClass("fullName")} />
                 <FieldError name="fullName" />
               </div>
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Gender <span className="text-red-500">*</span></label>
-                <select name="gender" value={formData.gender} onChange={handleChange} onBlur={handleBlur} className={inputClass("gender")}>
-                  <option value="">Select</option>
-                  <option>Male</option>
-                  <option>Female</option>
-                  <option>Other</option>
-                </select>
-                <FieldError name="gender" />
-              </div>
+              <DotRadioGroup name="gender" label="Gender" options={["Male", "Female", "Other"]} />
               <div>
                 <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Pincode <span className="text-red-500">*</span></label>
                 <input name="pincode" value={formData.pincode} onChange={handleChange} onBlur={handleBlur} placeholder="6-digit pincode" maxLength={6} inputMode="numeric" className={inputClass("pincode")} />
@@ -447,13 +497,6 @@ export default function ApplyLoan() {
             </div>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <button
-                type="button"
-                onClick={() => { setStep("otp"); setOtp(""); setOtpSent(false); }}
-                className="px-6 py-3 rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-400 active:scale-95"
-              >
-                ← Back to OTP
-              </button>
               <button
                 type="button"
                 onClick={handlePersonalContinue}
@@ -487,30 +530,11 @@ export default function ApplyLoan() {
           <form onSubmit={handleSubmit} noValidate className="space-y-7">
             <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Loan Type <span className="text-red-500">*</span></label>
-                <select name="loanType" value={formData.loanType} onChange={handleChange} onBlur={handleBlur} className={inputClass("loanType")}>
-                  <option value="">Select</option>
-                  <option>Personal Loan</option>
-                  <option>Business Loan</option>
-                  <option>Gold Loan</option>
-                  <option>Home Loan</option>
-                </select>
-                <FieldError name="loanType" />
-              </div>
-              <div>
                 <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Loan Amount (INR) <span className="text-red-500">*</span></label>
                 <input name="loanAmount" value={formData.loanAmount} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. 500000" inputMode="numeric" className={inputClass("loanAmount")} />
                 <FieldError name="loanAmount" />
               </div>
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Employment Type <span className="text-red-500">*</span></label>
-                <select name="employmentType" value={formData.employmentType} onChange={handleChange} onBlur={handleBlur} className={inputClass("employmentType")}>
-                  <option value="">Select</option>
-                  <option>Salaried</option>
-                  <option>Self Employed</option>
-                </select>
-                <FieldError name="employmentType" />
-              </div>
+              <DotRadioGroup name="employmentType" label="Employment Type" options={["Salaried", "Self Employed"]} />
               <div>
                 <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Yearly Income (INR) <span className="text-red-500">*</span></label>
                 <input name="yearlyIncome" value={formData.yearlyIncome} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. 600000" inputMode="numeric" className={inputClass("yearlyIncome")} />
@@ -548,7 +572,7 @@ export default function ApplyLoan() {
                     </svg>
                     Processing...
                   </span>
-                ) : "✓ Submit Application"}
+                ) : "✓ Check Offers"}
               </button>
             </div>
           </form>

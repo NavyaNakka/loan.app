@@ -119,7 +119,7 @@ export default function Signup() {
                     <form onSubmit={handleVerifyOtp} className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">
-                                Enter OTP <span className="text-xs text-slate-400 font-normal ml-2">(Use 1234 for testing)</span>
+                                Enter OTP
                             </label>
                             <input
                                 type="text"

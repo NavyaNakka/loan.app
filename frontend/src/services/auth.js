@@ -77,6 +77,19 @@ export const authService = {
     }
   },
 
+  updateUserData: (updates) => {
+    try {
+      const existingUserData = authService.getUserData();
+      if (!existingUserData) return null;
+
+      const nextUserData = { ...existingUserData, ...updates };
+      authService.setUserData(nextUserData);
+      return nextUserData;
+    } catch {
+      return null;
+    }
+  },
+
   // ✅ Check if user is authenticated
   isAuthenticated: () => {
     const token = authService.getToken();

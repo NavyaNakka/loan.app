@@ -136,10 +136,6 @@ export default function Login() {
                                 {loading ? "Sending OTP..." : "Send OTP"}
                             </button>
 
-                            <div className="text-center text-xs sm:text-sm text-slate-500 pt-4 space-y-1">
-                                <p><span className="font-semibold text-slate-700">Test Phone:</span> <span className="font-mono font-bold text-slate-700">9999999999</span></p>
-                                <p><span className="font-semibold text-slate-700">Test OTP:</span> <span className="font-mono font-bold text-slate-700">1234</span></p>
-                            </div>
                         </form>
                     ) : (
                         <form onSubmit={handleVerifyOtp} className="space-y-6">

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { trackAction } from "../services/track";
-import { ChevronDown, Menu, X, Landmark, CreditCard, Banknote, Wallet, Coins, LogOut, User } from "lucide-react";
+import { ChevronDown, Menu, X, Landmark, CreditCard, Banknote, Wallet, LogOut, User } from "lucide-react";
 
 export default function Navbar({ isAuthenticated = false, user = null, onLogout = null }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,10 +51,11 @@ export default function Navbar({ isAuthenticated = false, user = null, onLogout 
     navigate(`/apply-loan?type=${type}`);
   };
 
+  const hasApplication = Boolean(user?.hasApplication);
+
   const loanOptions = [
     { name: "Personal Loan", type: "personal_loan", icon: Banknote },
     { name: "Home Loan", type: "home_loan", icon: Landmark },
-    { name: "Gold Loan", type: "gold_loan", icon: Coins },
     { name: "Business Loan", type: "business_loan", icon: Wallet },
     { name: "Credit Card", type: "credit_card", icon: CreditCard },
   ];
@@ -144,11 +145,11 @@ export default function Navbar({ isAuthenticated = false, user = null, onLogout 
           {isAuthenticated && user ? (
             <>
               <Link
-                to="/apply-loan"
-                onClick={() => trackAction("navbar apply loan")}
+                to={hasApplication ? "/track-application" : "/apply-loan"}
+                onClick={() => trackAction(hasApplication ? "navbar track application" : "navbar apply loan")}
                 className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 hover:shadow-blue-700/30 active:scale-95"
               >
-                Apply Loan
+                {hasApplication ? "Track Application" : "Apply Loan"}
               </Link>
               <button
                 onClick={() => {
@@ -242,11 +243,11 @@ export default function Navbar({ isAuthenticated = false, user = null, onLogout 
               {isAuthenticated && user ? (
                 <>
                   <Link
-                    to="/apply-loan"
-                    onClick={() => { trackAction("navbar apply loan mobile"); setIsOpen(false); }}
+                    to={hasApplication ? "/track-application" : "/apply-loan"}
+                    onClick={() => { trackAction(hasApplication ? "navbar track application mobile" : "navbar apply loan mobile"); setIsOpen(false); }}
                     className="block w-full rounded-lg bg-blue-600 hover:bg-blue-700 px-6 py-4 text-center text-base font-bold text-white transition shadow-md active:scale-95"
                   >
-                    Apply Loan
+                    {hasApplication ? "Track Application" : "Apply Loan"}
                   </Link>
                   <button
                     onClick={() => {

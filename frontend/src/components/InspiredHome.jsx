@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { motion, useReducedMotion } from "framer-motion";
 import { trackAction } from "../services/track";
 import EmiCalculator from "./EmiCalculator";
 import Faq from "./Faq";
@@ -6,19 +7,19 @@ import Footer from "./Footer";
 
 const products = [
   // Active (eligible) products — shown first
-  { title: "Personal Loan", note: "Up to Rs. 15 Lakh", image: "/loan-images/personal-loan.svg", active: true },
-  { title: "Business Loan", note: "For growth and cash flow", image: "/loan-images/business-loan.svg", active: true },
-  { title: "Credit Card", note: "Cards matched to profile", image: "/loan-images/credit-card.svg", active: true },
+  { title: "Personal Loan", note: "Up to Rs. 15 Lakh", image: "/loan-images/personal-loan.svg", active: true, motion: "drift", accent: "from-blue-100 via-cyan-50 to-white" },
+  { title: "Business Loan", note: "For growth and cash flow", image: "/loan-images/business-loan.svg", active: true, motion: "tilt", accent: "from-emerald-100 via-teal-50 to-white" },
+  { title: "Credit Card", note: "Cards matched to profile", image: "/loan-images/credit-card.svg", active: true, motion: "orbit", accent: "from-violet-100 via-fuchsia-50 to-white" },
   // Coming soon — shown at bottom
-  { title: "Gold Loan", note: "Fast secured funding", image: "/loan-images/gold-loan.svg", active: false },
-  { title: "Home Loan", note: "Long tenure options", image: "/loan-images/home-loan.svg", active: false },
-  { title: "Education Loan", note: "Study with confidence", image: "/loan-images/education-loan.svg", active: false },
-  { title: "Car Loan", note: "New car financing", image: "/loan-images/car-loan.svg", active: false },
-  { title: "LAP", note: "Loan against property", image: "/loan-images/lap-loan.svg", active: false },
-  { title: "Bike Loan", note: "Quick two-wheeler finance", image: "/loan-images/bike-loan.svg", active: false },
-  { title: "Used Car", note: "Affordable pre-owned finance", image: "/loan-images/used-car-loan.svg", active: false },
-  { title: "Health Card", note: "Medical expense support", image: "/loan-images/health-card.svg", active: false },
-  { title: "Credit Score Check", note: "Know your credit health", image: "/loan-images/credit-score.svg", active: false },
+  { title: "Gold Loan", note: "Fast secured funding", image: "/loan-images/gold-loan.svg", active: false, motion: "pulse", accent: "from-amber-100 via-yellow-50 to-white" },
+  { title: "Home Loan", note: "Long tenure options", image: "/loan-images/home-loan.svg", active: false, motion: "rise", accent: "from-sky-100 via-blue-50 to-white" },
+  { title: "Education Loan", note: "Study with confidence", image: "/loan-images/education-loan.svg", active: false, motion: "swing", accent: "from-pink-100 via-rose-50 to-white" },
+  { title: "Car Loan", note: "New car financing", image: "/loan-images/car-loan.svg", active: false, motion: "drift", accent: "from-orange-100 via-amber-50 to-white" },
+  { title: "LAP", note: "Loan against property", image: "/loan-images/lap-loan.svg", active: false, motion: "tilt", accent: "from-cyan-100 via-sky-50 to-white" },
+  { title: "Bike Loan", note: "Quick two-wheeler finance", image: "/loan-images/bike-loan.svg", active: false, motion: "orbit", accent: "from-lime-100 via-green-50 to-white" },
+  { title: "Used Car", note: "Affordable pre-owned finance", image: "/loan-images/used-car-loan.svg", active: false, motion: "rise", accent: "from-slate-200 via-slate-50 to-white" },
+  { title: "Health Card", note: "Medical expense support", image: "/loan-images/health-card.svg", active: false, motion: "pulse", accent: "from-red-100 via-rose-50 to-white" },
+  { title: "Credit Score Check", note: "Know your credit health", image: "/loan-images/credit-score.svg", active: false, motion: "swing", accent: "from-indigo-100 via-blue-50 to-white" },
 ];
 
 const steps = [
@@ -29,6 +30,111 @@ const steps = [
 ];
 
 export default function InspiredHome() {
+  const prefersReducedMotion = useReducedMotion();
+
+  const getLogoMotion = (motionType, active, index) => {
+    if (prefersReducedMotion) {
+      return {};
+    }
+
+    const direction = index % 2 === 0 ? 1 : -1;
+    const shared = {
+      initial: { x: 0, y: 0, rotate: 0, scale: 1 },
+      transition: {
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: index * 0.1,
+      },
+      whileHover: {
+        x: 0,
+        y: -6,
+        rotate: 0,
+        scale: active ? 1.1 : 1.07,
+        transition: { duration: 0.2 },
+      },
+    };
+
+    const variants = {
+      drift: {
+        ...shared,
+        animate: {
+          x: [0, 10 * direction, -4 * direction, 0],
+          y: [0, -8, -2, 0],
+          rotate: [0, 2 * direction, -1 * direction, 0],
+          scale: [1, 1.04, 1.01, 1],
+        },
+        transition: { ...shared.transition, duration: 4.2 },
+      },
+      tilt: {
+        ...shared,
+        animate: {
+          rotate: [0, 5 * direction, -3 * direction, 0],
+          y: [0, -4, 0, -2, 0],
+          scale: [1, 1.03, 0.99, 1],
+        },
+        transition: { ...shared.transition, duration: 3.6 },
+      },
+      orbit: {
+        ...shared,
+        animate: {
+          x: [0, 6 * direction, 0, -6 * direction, 0],
+          y: [0, -3, -8, -3, 0],
+          rotate: [0, 3 * direction, 0, -3 * direction, 0],
+          scale: [1, 1.02, 1.05, 1.02, 1],
+        },
+        transition: { ...shared.transition, duration: 4.8 },
+      },
+      pulse: {
+        ...shared,
+        animate: {
+          scale: [1, 1.08, 1, 1.05, 1],
+          y: [0, -2, 0, -4, 0],
+          rotate: [0, 1.5 * direction, 0],
+        },
+        transition: { ...shared.transition, duration: 3.4 },
+      },
+      rise: {
+        ...shared,
+        animate: {
+          y: [0, -10, -3, 0],
+          x: [0, 3 * direction, 0],
+          scale: [1, 1.03, 1],
+        },
+        transition: { ...shared.transition, duration: 3.9 },
+      },
+      swing: {
+        ...shared,
+        animate: {
+          rotate: [0, 4 * direction, 0, -4 * direction, 0],
+          x: [0, 4 * direction, 0, -4 * direction, 0],
+          y: [0, -3, 0],
+        },
+        transition: { ...shared.transition, duration: 4.4 },
+      },
+    };
+
+    return variants[motionType] || variants.drift;
+  };
+
+  const getHaloMotion = (index) => {
+    if (prefersReducedMotion) {
+      return {};
+    }
+
+    return {
+      animate: {
+        scale: [1, 1.12, 0.96, 1],
+        opacity: [0.28, 0.45, 0.22, 0.28],
+      },
+      transition: {
+        duration: 3.6 + (index % 4) * 0.35,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: index * 0.08,
+      },
+    };
+  };
+
   return (
     <>
       <section className="relative overflow-hidden bg-gradient-to-b from-sky-50 via-white to-white">
@@ -121,7 +227,7 @@ export default function InspiredHome() {
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {products.map((item) => {
+          {products.map((item, index) => {
             const CardTag = item.active ? Link : "div";
 
             return (
@@ -139,13 +245,22 @@ export default function InspiredHome() {
                     Coming Soon
                   </span>
                 )}
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className={`h-14 w-14 object-contain transition duration-300 ${item.active ? "group-hover:scale-[1.06]" : "opacity-80"}`}
-                    loading="lazy"
+                <div className={`relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-100 bg-gradient-to-br ${item.accent}`}>
+                  <motion.div
+                    {...getHaloMotion(index)}
+                    className="absolute inset-2 rounded-full bg-white/70 blur-md"
                   />
+                  <motion.div
+                    {...getLogoMotion(item.motion, item.active, index)}
+                    className="relative z-10 flex h-14 w-14 items-center justify-center"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className={`h-14 w-14 object-contain transition duration-300 ${item.active ? "group-hover:scale-[1.06]" : "opacity-85"}`}
+                      loading="lazy"
+                    />
+                  </motion.div>
                 </div>
                 <div className="min-w-0 flex-1 pr-20">
                   <p className="truncate text-[13px] font-bold leading-snug text-slate-900">{item.title}</p>

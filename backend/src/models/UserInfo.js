@@ -45,6 +45,22 @@
 // export default mongoose.model("UserInfo", schema);
 import mongoose from "mongoose";
 
+const lenderSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    url: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  { _id: false }
+);
+
 const schema = new mongoose.Schema(
   {
     userId: {
@@ -64,6 +80,26 @@ const schema = new mongoose.Schema(
       // unique: true, // Allow duplicates for testing
       uppercase: true,
       trim: true,
+    },
+    lenderName: {
+      type: String,
+      default: "Ram Fincorp",
+      trim: true,
+    },
+    lenderStatus: {
+      type: String,
+      enum: ["submitted", "in_progress"],
+      default: "submitted",
+      trim: true,
+    },
+    approvedLenders: {
+      type: [lenderSchema],
+      default: [
+        {
+          name: "Ram Fincorp",
+          url: "https://applyonline.ramfincorp.com/?utm_source=kreditkonnect",
+        },
+      ],
     },
     loanType: String,
     loanAmount: Number,
