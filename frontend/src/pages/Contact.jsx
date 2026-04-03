@@ -23,9 +23,7 @@ export default function Contact() {
             </div>
             <h3 className="mt-4 text-sm font-semibold text-slate-900">Phone</h3>
             <p className="mt-1 text-xs text-slate-500">Mon – Sat, 9 AM – 6 PM</p>
-            <a href="tel:+919966298631" className="mt-3 block text-sm font-medium text-blue-600 hover:underline">
-              +91 9966298631
-            </a>
+            <p className="mt-3 text-sm font-medium text-slate-500">Available via email</p>
           </div>
 
           {/* Email */}

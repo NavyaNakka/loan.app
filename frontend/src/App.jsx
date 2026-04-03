@@ -86,6 +86,11 @@ function App() {
     }
   }, [location]);
 
+  // ✅ Scroll to top on every route change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [location.pathname]);
+
   // ✅ Listen for localStorage changes from same tab/window
   useEffect(() => {
     const handleStorageChange = () => {

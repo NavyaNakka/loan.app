@@ -9,6 +9,8 @@ export default function AboutUs() {
     ];
 
     const values = [
+        export default function AboutUs() {
+            const values = [
         {
             icon: Zap,
             title: "Lightning Fast",
@@ -81,6 +83,9 @@ export default function AboutUs() {
             </section>
 
             {/* Story / Values Section */}
+                        </section>
+
+                        {/* Story / Values Section */}
             <section className="py-24 sm:py-32">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
                     <div className="mx-auto max-w-3xl text-center">
