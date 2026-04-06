@@ -107,16 +107,14 @@ export const verifyOtp = async (req, res) => {
             user = await User.create({ phone });
         }
 
-        if (sessionId) {
-            await UserStatusHistory.updateMany(
+        // Run both queries in parallel instead of sequentially
+        const [updateResult, existingApplication] = await Promise.all([
+            sessionId ? UserStatusHistory.updateMany(
                 { sessionId },
                 { userId: user._id, lastModifiedOn: new Date() }
-            );
-        }
-
-        const existingApplication = await UserInfo.findOne({ phone })
-            .sort({ createdAt: -1 })
-            .select("lenderName lenderStatus approvedLenders");
+            ) : Promise.resolve(),
+            UserInfo.findOne({ phone }).sort({ createdAt: -1 }).select("lenderName lenderStatus approvedLenders")
+        ]);
 
         res.json({
             success: true,

@@ -71,6 +71,7 @@ const schema = new mongoose.Schema(
     phone: {
       type: String,
       trim: true,
+      index: true,
     },
     gender: String,
     pincode: String,
