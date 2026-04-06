@@ -1,13 +1,9 @@
-// import app from "./index.js";
-// import connectDB from "./config/db.js";
-
-// connectDB();
-
-// app.listen(process.env.PORT, () => {
-//   console.log("🚀 Server running on port 5000");
-// });
 import dotenv from "dotenv";
-dotenv.config({ path: ".env.development" });
+
+// Only load .env.development in development
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: ".env.development" });
+}
 
 import app from "./index.js";
 import connectDB from "./config/db.js";
