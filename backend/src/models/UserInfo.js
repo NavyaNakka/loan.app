@@ -21,7 +21,6 @@ const schema = new mongoose.Schema(
   {
     userId: {
       type: String,
-      unique: true,
     },
     fullName: String,
     phone: {
@@ -31,10 +30,13 @@ const schema = new mongoose.Schema(
     },
     gender: String,
     pincode: String,
+    employmentType: {
+      type: String,
+      enum: ["Salaried", "Self-Employed"],
+    },
     panNumber: {
       type: String,
       required: true,
-      // unique: true, // Allow duplicates for testing
       uppercase: true,
       trim: true,
     },
@@ -62,15 +64,11 @@ const schema = new mongoose.Schema(
     loanAmount: Number,
     yearlyIncome: Number,
     sessionId: String,
-
-    // ✅ ADD THIS 👇 (CONSENT FIX)
     acceptedTerms: {
       type: Boolean,
       required: true,
       default: false,
     },
-
-    // ✅ OPTIONAL (BEST PRACTICE - HIGHLY RECOMMENDED)
     consentAt: {
       type: Date,
       default: Date.now,
