@@ -541,7 +541,7 @@ export default function ApplyLoan() {
                 <input name="loanAmount" value={formData.loanAmount} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. 500000" inputMode="numeric" className={inputClass("loanAmount")} />
                 <FieldError name="loanAmount" />
               </div>
-              <DotRadioGroup name="employmentType" label="Employment Type" options={["Salaried", "Self Employed"]} />
+              <DotRadioGroup name="employmentType" label="Employment Type" options={["Salaried", "Self-Employed"]} />
               <div>
                 <label className="mb-1.5 block text-xs font-semibold text-slate-700 uppercase tracking-wider">Yearly Income (INR) <span className="text-red-500">*</span></label>
                 <input name="yearlyIncome" value={formData.yearlyIncome} onChange={handleChange} onBlur={handleBlur} placeholder="e.g. 600000" inputMode="numeric" className={inputClass("yearlyIncome")} />
