@@ -5,13 +5,6 @@ export default function OtpScreen({ onSubmit, loading, error }) {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState("phone");
 
-  // const handleSendOtp = (e) => {
-  //   e.preventDefault();
-  //   if (phone.length === 10) {
-  //     setStep("otp");
-  //     if (onSubmit) onSubmit({ phone });
-  //   }
-  // };
      const handleSendOtp = async (e) => {
   e.preventDefault();
   if (phone.length === 10) {
@@ -21,12 +14,7 @@ export default function OtpScreen({ onSubmit, loading, error }) {
     setStep("otp"); // ✅ move AFTER API completes
   }
  };
-//   const handleVerifyOtp = (e) => {
-//     e.preventDefault();
-//     if (otp.length === 4) {
-//       if (onSubmit) onSubmit({ phone, otp });
-//     }
-//   };
+
 const handleVerifyOtp = async (e) => {
   e.preventDefault();
   if (otp.length === 4) {
