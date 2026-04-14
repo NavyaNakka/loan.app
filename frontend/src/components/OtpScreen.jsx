@@ -5,20 +5,36 @@ export default function OtpScreen({ onSubmit, loading, error }) {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState("phone");
 
-  const handleSendOtp = (e) => {
-    e.preventDefault();
-    if (phone.length === 10) {
-      setStep("otp");
-      if (onSubmit) onSubmit({ phone });
+  // const handleSendOtp = (e) => {
+  //   e.preventDefault();
+  //   if (phone.length === 10) {
+  //     setStep("otp");
+  //     if (onSubmit) onSubmit({ phone });
+  //   }
+  // };
+     const handleSendOtp = async (e) => {
+  e.preventDefault();
+  if (phone.length === 10) {
+    if (onSubmit) {
+      await onSubmit({ phone }); // ✅ WAIT for API
     }
-  };
-
-  const handleVerifyOtp = (e) => {
-    e.preventDefault();
-    if (otp.length === 4) {
-      if (onSubmit) onSubmit({ phone, otp });
+    setStep("otp"); // ✅ move AFTER API completes
+  }
+ };
+//   const handleVerifyOtp = (e) => {
+//     e.preventDefault();
+//     if (otp.length === 4) {
+//       if (onSubmit) onSubmit({ phone, otp });
+//     }
+//   };
+const handleVerifyOtp = async (e) => {
+  e.preventDefault();
+  if (otp.length === 4) {
+    if (onSubmit) {
+      await onSubmit({ phone, otp }); // better consistency
     }
-  };
+  }
+};
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh]">
